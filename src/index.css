@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+:root {
+  font-family: 'Space Grotesk', Arial, sans-serif;
+  color: #e9f1ef;
+  background: #050b0e;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --bg: #050b0e;
+  --bg-soft: #081216;
+  --panel: #0b171c;
+  --panel-light: #102127;
+  --white: #e9f1ef;
+  --muted: #84969a;
+  --line: rgba(176, 220, 216, 0.15);
+  --line-bright: rgba(176, 220, 216, 0.3);
+  --acid: #69ffe1;
+  --acid-soft: rgba(105, 255, 225, 0.14);
+  --orange: #ff865c;
+  --blue: #8da5ff;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; background: var(--bg); }
+body { margin: 0; min-width: 320px; min-height: 100vh; overflow-x: hidden; }
+body.modal-open { overflow: hidden; }
+button, input { font: inherit; }
+button { border: 0; color: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+a { color: inherit; text-decoration: none; }
+::selection { color: #04100e; background: var(--acid); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
