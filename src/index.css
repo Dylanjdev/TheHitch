@@ -17,7 +17,7 @@
   --line-bright: rgba(176, 220, 216, 0.3);
   --acid: #69ffe1;
   --acid-soft: rgba(105, 255, 225, 0.14);
-  --orange: #ff865c;
+  --accent-bright: #69a87a;
   --blue: #8da5ff;
   --mono: 'IBM Plex Mono', ui-monospace, monospace;
 }

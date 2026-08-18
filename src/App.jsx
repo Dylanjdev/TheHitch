@@ -70,7 +70,7 @@ function Brand() {
   )
 }
 
-function BriefingModal({ onClose }) {
+function WaitlistModal({ onClose }) {
   const [sent, setSent] = useState(false)
 
   useEffect(() => {
@@ -85,27 +85,27 @@ function BriefingModal({ onClose }) {
 
   return (
     <div className="modal-backdrop" onMouseDown={onClose}>
-      <div className="modal-panel" role="dialog" aria-modal="true" aria-labelledby="briefing-title" onMouseDown={(event) => event.stopPropagation()}>
+      <div className="modal-panel" role="dialog" aria-modal="true" aria-labelledby="waitlist-title" onMouseDown={(event) => event.stopPropagation()}>
         <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="close" /></button>
         <div className="modal-status"><i /> SECURE CHANNEL / OPEN</div>
         {!sent ? (
           <>
-            <p className="eyebrow">PRIVATE BRIEFING</p>
-            <h2 id="briefing-title">Connect to the network.</h2>
-            <p className="modal-copy">Share your details and we’ll coordinate an executive overview of the Hitch Post deployment model.</p>
+            <p className="eyebrow">EARLY ACCESS</p>
+            <h2 id="waitlist-title">Join the network.</h2>
+            <p className="modal-copy">Join the Hitch Post waitlist for deployment updates and early access opportunities.</p>
             <form onSubmit={(event) => { event.preventDefault(); setSent(true) }}>
               <label>NAME<input name="name" required autoFocus placeholder="Your name" /></label>
               <label>WORK EMAIL<input name="email" required type="email" placeholder="you@company.com" /></label>
               <label>ORGANIZATION<input name="organization" placeholder="Company or fund" /></label>
-              <button className="primary-button full" type="submit">Transmit request <Icon name="arrow" /></button>
+              <button className="primary-button full" type="submit">Join the waitlist <Icon name="arrow" /></button>
             </form>
           </>
         ) : (
           <div className="success-state">
             <span><Icon name="check" size={28} /></span>
-            <p className="eyebrow">TRANSMISSION RECEIVED</p>
-            <h2>Signal locked.</h2>
-            <p>The Hitch Post team will follow up to coordinate a private briefing.</p>
+            <p className="eyebrow">WAITLIST CONFIRMED</p>
+            <h2>You’re on the list.</h2>
+            <p>We’ll keep you updated as the Hitch Post network comes online.</p>
             <button className="text-button" onClick={onClose}>Return to system <Icon name="arrow" /></button>
           </div>
         )}
@@ -116,7 +116,7 @@ function BriefingModal({ onClose }) {
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [briefingOpen, setBriefingOpen] = useState(false)
+  const [waitlistOpen, setWaitlistOpen] = useState(false)
   const [booted, setBooted] = useState(false)
   const [heroPhase, setHeroPhase] = useState('0')
 
@@ -194,19 +194,30 @@ function App() {
           row.style.setProperty('--sequence-focus', focus)
           row.style.setProperty('--sequence-shift', `${(0.5 - focus) * 10}px`)
         })
-        document.querySelectorAll('.layer-grid article').forEach((card, index) => {
-          const station = 0.14 + index * 0.24
+        const layerCards = [...document.querySelectorAll('.layer-grid article')]
+        const cardStations = layerCards.map((_, index) => 0.14 + index * 0.24)
+        const activeCardIndex = cardStations.reduce((closestIndex, station, index) => (
+          Math.abs(systemProgress - station) < Math.abs(systemProgress - cardStations[closestIndex])
+            ? index
+            : closestIndex
+        ), 0)
+        layerCards.forEach((card, index) => {
+          const station = cardStations[index]
           const distance = systemProgress - station
-          const focus = clamp(1 - Math.abs(distance) / 0.13)
+          const rawFocus = clamp(1 - Math.abs(distance) / 0.18)
+          const isActive = index === activeCardIndex
+          const focus = isActive ? Math.max(rawFocus, 0.86) : rawFocus * 0.16
           const cardPhase = 0.5 + distance / 0.13
+          const activeOffset = Math.max(-1, Math.min(1, distance / 0.14))
           card.style.setProperty('--card-focus', focus)
-          card.style.setProperty('--card-opacity', `${0.04 + focus * 0.96}`)
+          card.style.setProperty('--card-opacity', isActive ? '1' : `${0.05 + rawFocus * 0.08}`)
           card.style.setProperty('--card-scale', `${0.9 + focus * 0.1}`)
           card.style.setProperty('--card-phase', cardPhase)
-          card.style.setProperty('--card-turn', `${(0.5 - cardPhase) * 5}deg`)
-          card.style.setProperty('--card-vertical', `${(0.5 - cardPhase) * 42}deg`)
-          card.style.setProperty('--card-depth', `${(0.5 - cardPhase) * 56}px`)
-          card.style.setProperty('--card-rise', `${(0.5 - cardPhase) * 12}px`)
+          card.style.setProperty('--card-turn', `${isActive ? -activeOffset * 1.5 : (0.5 - cardPhase) * 5}deg`)
+          card.style.setProperty('--card-vertical', `${isActive ? -activeOffset * 5 : (0.5 - cardPhase) * 42}deg`)
+          card.style.setProperty('--card-depth', `${isActive ? 0 : (0.5 - cardPhase) * 56}px`)
+          card.style.setProperty('--card-rise', `${isActive ? activeOffset * 3 : (0.5 - cardPhase) * 12}px`)
+          card.style.setProperty('--card-z', isActive ? '2' : '1')
         })
         root.style.setProperty('--system-intro-y', `${(1 - systemProgress) * 28}px`)
         root.style.setProperty('--field-image-y', `${(0.5 - fieldProgress) * 46}px`)
@@ -254,7 +265,7 @@ function App() {
           <button onClick={() => goTo('#deployment')}>Deployment</button>
           <button onClick={() => goTo('#network')}>Network</button>
         </nav>
-        <button className="header-action" onClick={() => setBriefingOpen(true)}>Request briefing <Icon name="arrow" size={17} /></button>
+        <button className="header-action" onClick={() => setWaitlistOpen(true)}>Join the waitlist <Icon name="arrow" size={17} /></button>
         <button className="menu-button" onClick={() => setMenuOpen((open) => !open)} aria-label="Toggle navigation"><Icon name={menuOpen ? 'close' : 'menu'} /></button>
       </header>
 
@@ -274,7 +285,7 @@ function App() {
               <p>Field-ready power and cooling for mobile AI infrastructure. Pull in, hitch up, and operate.</p>
               <div className="hero-actions">
                 <button className="primary-button" onClick={() => goTo('#system')}>Explore the system <Icon name="arrow" /></button>
-                <button className="text-button" onClick={() => setBriefingOpen(true)}>Investor briefing <span>↗</span></button>
+                <button className="text-button" onClick={() => setWaitlistOpen(true)}>Join the waitlist <span>↗</span></button>
               </div>
             </div>
 
@@ -356,7 +367,7 @@ function App() {
             <p className="section-code">03 / NETWORK EFFECT</p>
             <h2>Fix the post.<br />Mobilize the <em>rig.</em></h2>
             <p>Standardized connection points let compute move to available energy. Every deployment expands a reusable network—not another stranded facility.</p>
-            <button className="outline-button" onClick={() => setBriefingOpen(true)}>View deployment thesis <Icon name="arrow" /></button>
+            <button className="outline-button" onClick={() => setWaitlistOpen(true)}>Join deployment waitlist <Icon name="arrow" /></button>
           </div>
           <div className="network-readout" data-reveal>
             <div className="network-readout-top"><span><i /> LIVE 3D TOPOLOGY</span><b>04 NODES ONLINE</b></div>
@@ -371,7 +382,7 @@ function App() {
           <p className="eyebrow"><span className="live-dot" /> ACCESS POINT / OPEN</p>
           <h2>Bring compute<br /><em>to the power.</em></h2>
           <p>Ready to see the next infrastructure layer?</p>
-          <button className="primary-button large" onClick={() => setBriefingOpen(true)}>Request a private briefing <Icon name="arrow" /></button>
+          <button className="primary-button large" onClick={() => setWaitlistOpen(true)}>Join the waitlist <Icon name="arrow" /></button>
           <div className="closing-meta"><span>NDA-READY MATERIALS</span><span>INVESTORS / OPERATORS / STRATEGIC PARTNERS</span></div>
         </section>
       </main>
@@ -382,7 +393,7 @@ function App() {
         <div><a href="mailto:hello@thehitchpost.energy">CONTACT ↗</a><a href="#top">BACK TO TOP ↑</a></div>
       </footer>
 
-      {briefingOpen && <BriefingModal onClose={() => setBriefingOpen(false)} />}
+      {waitlistOpen && <WaitlistModal onClose={() => setWaitlistOpen(false)} />}
     </div>
   )
 }

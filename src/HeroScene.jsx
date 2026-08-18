@@ -3,7 +3,7 @@ import * as THREE from 'three'
 
 const palettes = {
   power: new THREE.Color('#63f5d8'),
-  thermal: new THREE.Color('#ff9b6b'),
+  thermal: new THREE.Color('#69a87a'),
   uplink: new THREE.Color('#8ba6ff'),
 }
 
@@ -188,7 +188,7 @@ function HeroScene({ mode = 'power' }) {
     }
 
     createContentRig(0x69ffe1, 'ring')
-    createContentRig(0xff9b6b, 'octa')
+    createContentRig(0x69a87a, 'octa')
     createContentRig(0x8ba6ff, 'ring')
     createContentRig(0x69ffe1, 'octa')
 
@@ -390,7 +390,7 @@ function HeroScene({ mode = 'power' }) {
     }
 
     createArtifact('system', 0x69ffe1, new THREE.Vector3(-1.1, 0.42, 0.8))
-    createArtifact('field', 0xff9b6b, new THREE.Vector3(1.2, 0.36, 0.7))
+    createArtifact('field', 0x69a87a, new THREE.Vector3(1.2, 0.36, 0.7))
     createArtifact('network', 0x8ba6ff, new THREE.Vector3(0.2, 0.62, -0.7))
     createArtifact('closing', 0x69ffe1, new THREE.Vector3(0, 0.72, 0.2))
 
@@ -1828,14 +1828,14 @@ function HeroScene({ mode = 'power' }) {
         (1 - smooth(0.58, 0.74, progress)) * 1.25,
       ]
       const textPresence = 1 - smooth(0.82, 0.98, progress)
-      const textGate = smooth(0.08, 0.2, progress)
+      const textGate = smooth(0.17, 0.25, progress)
 
       ;[textPhaseOne, textPhaseTwo, textPhaseThree].forEach(
         (opacity, index) => {
           const sprite = textSprites[index]
           const isMobile = viewportWidth <= 620
           const mobileTextScale = isMobile ? 0.95 : 1
-          sprite.scale.setScalar(isMobile ? 0.72 : 1)
+          sprite.scale.setScalar(isMobile ? 0.92 : 1)
           sprite.material.opacity = reducedMotion
             ? index === 0
               ? textPresence * textGate * mobileTextScale
@@ -1845,10 +1845,10 @@ function HeroScene({ mode = 'power' }) {
             ? 0
             : textSpins[index] * (isMobile ? 0.55 : 0.82)
           sprite.position.x =
-            (isMobile ? 0.35 : -2.2) +
-            progress * (isMobile ? 1.1 : 2.1)
+            (isMobile ? -0.4 : -2.6) +
+            progress * (isMobile ? 0.35 : 0.9)
           sprite.position.y =
-            (isMobile ? 0.76 : 1.28) +
+            (isMobile ? 2.4 : 1.75) +
             Math.sin(time * 0.7 + index) * 0.025
         },
       )
