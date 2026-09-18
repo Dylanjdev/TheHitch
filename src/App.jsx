@@ -1,9 +1,9 @@
-import { lazy, Suspense, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import heroImage from './assets/Hero.webp'
 import fieldImage from './assets/outpost-hero.webp'
+import geothermalImage from './assets/GeoThermalRepresentation.png'
+import brandLogo from './assets/PowerPastureLogo.png'
 import './App.css'
-
-const GlobalScene = lazy(() => import('./HeroScene.jsx'))
 
 const layers = [
   {
@@ -16,10 +16,10 @@ const layers = [
   },
   {
     id: '02',
-    code: 'HITCH',
+    code: 'INTERFACE',
     title: 'Universal interface',
     copy: 'One strain-relieved connection brings power, thermal, and data online without rebuilding the site.',
-    icon: 'hitch',
+    icon: 'interface',
     stat: 'ONE CONNECTION',
   },
   {
@@ -34,7 +34,7 @@ const layers = [
     id: '04',
     code: 'CONTROL',
     title: 'Live orchestration',
-    copy: 'Every Hitch Post reports, balances, and optimizes itself as part of a distributed operating network.',
+    copy: 'Every Power Pasture site reports, balances, and optimizes itself as part of a distributed operating network.',
     icon: 'signal',
     stat: 'ALWAYS ONLINE',
   },
@@ -42,7 +42,7 @@ const layers = [
 
 const sequence = [
   { id: '01', verb: 'Harvest', copy: 'The post aggregates and stores available energy before a compute rig arrives.' },
-  { id: '02', verb: 'Hitch', copy: 'A mobile compute rig connects through one standardized physical interface.' },
+  { id: '02', verb: 'Connect', copy: 'A mobile compute rig connects through one standardized physical interface.' },
   { id: '03', verb: 'Operate', copy: 'Power, thermal management, and telemetry synchronize in a single motion.' },
 ]
 
@@ -51,7 +51,7 @@ function Icon({ name, size = 20 }) {
   const paths = {
     arrow: <><path d="M5 12h14" /><path d="m14 7 5 5-5 5" /></>,
     bolt: <path d="m13.2 2-9 12h7l-.5 8 9-12h-7.2l.7-8Z" />,
-    hitch: <><path d="M3 7h7v10H3zM14 5v14M10 9h4M10 15h4M19 8v8M14 12h5" /></>,
+    interface: <><path d="M3 7h7v10H3zM14 5v14M10 9h4M10 15h4M19 8v8M14 12h5" /></>,
     thermal: <><path d="M14 14.7V5a2 2 0 0 0-4 0v9.7a4 4 0 1 0 4 0Z" /><path d="M12 11v6" /></>,
     signal: <><path d="M5 16a7 7 0 0 1 14 0M8 16a4 4 0 0 1 8 0" /><circle cx="12" cy="16" r="1" fill="currentColor" stroke="none" /></>,
     menu: <><path d="M4 8h16M4 16h16" /></>,
@@ -63,9 +63,9 @@ function Icon({ name, size = 20 }) {
 
 function Brand() {
   return (
-    <a className="brand" href="#top" aria-label="The Hitch Post home">
-      <span className="brand-glyph" aria-hidden="true"><i /><i /><i /></span>
-      <span><b>THE HITCH POST</b><small>SOVEREIGN COMPUTE</small></span>
+    <a className="brand" href="#top" aria-label="Power Pasture home">
+      <span className="brand-mark" aria-hidden="true"><img src={brandLogo} alt="" /></span>
+      <span><b>POWER PASTURE</b><small>SOVEREIGN COMPUTE</small></span>
     </a>
   )
 }
@@ -92,7 +92,7 @@ function WaitlistModal({ onClose }) {
           <>
             <p className="eyebrow">EARLY ACCESS</p>
             <h2 id="waitlist-title">Join the network.</h2>
-            <p className="modal-copy">Join the Hitch Post waitlist for deployment updates and early access opportunities.</p>
+            <p className="modal-copy">Join the Power Pasture waitlist for deployment updates and early access opportunities.</p>
             <form onSubmit={(event) => { event.preventDefault(); setSent(true) }}>
               <label>NAME<input name="name" required autoFocus placeholder="Your name" /></label>
               <label>WORK EMAIL<input name="email" required type="email" placeholder="you@company.com" /></label>
@@ -105,7 +105,7 @@ function WaitlistModal({ onClose }) {
             <span><Icon name="check" size={28} /></span>
             <p className="eyebrow">WAITLIST CONFIRMED</p>
             <h2>You’re on the list.</h2>
-            <p>We’ll keep you updated as the Hitch Post network comes online.</p>
+            <p>We’ll keep you updated as the Power Pasture network comes online.</p>
             <button className="text-button" onClick={onClose}>Return to system <Icon name="arrow" /></button>
           </div>
         )}
@@ -122,6 +122,19 @@ function App() {
 
   useEffect(() => {
     const timer = window.setTimeout(() => setBooted(true), 1350)
+    const root = document.documentElement
+    const hero = document.querySelector('.hero')
+    const fieldSection = document.querySelector('.field-section')
+    const networkSection = document.querySelector('.network-section')
+    const closingSection = document.querySelector('.closing-section')
+    const sequenceRows = [...document.querySelectorAll('.sequence-list article')]
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const clamp = (value) => Math.max(0, Math.min(1, value))
+    const smooth = (start, end, value) => {
+      const point = clamp((value - start) / (end - start))
+      return point * point * (3 - 2 * point)
+    }
+    const setVariable = (name, value) => root.style.setProperty(name, value)
     const reveal = new IntersectionObserver(
       (entries) => entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add('is-visible')),
       { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
@@ -129,118 +142,153 @@ function App() {
     document.querySelectorAll('[data-reveal]').forEach((element) => reveal.observe(element))
 
     let frame = 0
-    const onScroll = () => {
-      if (frame) return
-      frame = window.requestAnimationFrame(() => {
-        const root = document.documentElement
-        const hero = document.querySelector('.hero')
-        const clamp = (value) => Math.max(0, Math.min(1, value))
-        const smooth = (start, end, value) => {
-          const point = clamp((value - start) / (end - start))
-          return point * point * (3 - 2 * point)
-        }
-        const rect = hero?.getBoundingClientRect()
-        const travel = hero ? Math.max(hero.offsetHeight - window.innerHeight, 1) : 1
-        const progress = rect ? clamp(-rect.top / travel) : 0
-        const phaseOne = 1 - smooth(.28, .4, progress)
-        const phaseTwo = smooth(.25, .4, progress) * (1 - smooth(.62, .74, progress))
-        const phaseThree = smooth(.58, .74, progress)
-        const phaseOneSpin = -smooth(.28, .4, progress) * 72
-        const phaseTwoSpin = (1 - smooth(.25, .4, progress)) * 72 - smooth(.62, .74, progress) * 72
-        const phaseThreeSpin = (1 - smooth(.58, .74, progress)) * 72
+    let targetHeroProgress = 0
+    let renderedHeroProgress = 0
+    let previousHeroProgress = 0
+    let previousFrameTime = performance.now()
+    let currentHeroPhase = '0'
+    let hasScrolled = false
+    let sectionUpdatePending = true
+    let lastFieldProgress = -1
+    let lastNetworkProgress = -1
+    let lastClosingProgress = -1
 
-        root.style.setProperty('--scroll-y', `${window.scrollY}px`)
-        root.style.setProperty('--hero-scroll', progress)
-        root.style.setProperty('--intro-alpha', 1 - smooth(.05, .17, progress))
-        root.style.setProperty('--phase-one-alpha', phaseOne)
-        root.style.setProperty('--phase-two-alpha', phaseTwo)
-        root.style.setProperty('--phase-three-alpha', phaseThree)
-        root.style.setProperty('--phase-one-y', `${(1 - phaseOne) * 42}px`)
-        root.style.setProperty('--phase-two-y', `${(1 - phaseTwo) * 42}px`)
-        root.style.setProperty('--phase-three-y', `${(1 - phaseThree) * 42}px`)
-        root.style.setProperty('--phase-one-spin', `${phaseOneSpin}deg`)
-        root.style.setProperty('--phase-two-spin', `${phaseTwoSpin}deg`)
-        root.style.setProperty('--phase-three-spin', `${phaseThreeSpin}deg`)
-        root.style.setProperty('--hero-copy-y', `${-progress * 92}px`)
-        root.style.setProperty('--hero-image-scale', `${1.04 + progress * 0.055}`)
-        root.style.setProperty('--hero-image-x', `${progress * -1.2}%`)
-        root.style.setProperty('--scene-y', `${progress * -24}px`)
-        root.style.setProperty('--scene-rotate', `${progress * 1.6}deg`)
-        root.style.setProperty('--telemetry-x', `${progress * -14}px`)
-        const narrativeWidth = Math.min(340, window.innerWidth * 0.32)
-        const narrativeTravel = window.innerWidth > 768
-          ? Math.max(window.innerWidth - narrativeWidth - 160, 0)
-          : 0
-        root.style.setProperty('--narrative-x', `${progress * narrativeTravel}px`)
-        root.style.setProperty('--narrative-tilt', `${(0.5 - progress) * 5}deg`)
-        root.style.setProperty('--narrative-scale', `${1 - progress * 0.06}`)
-        const sectionProgress = (selector) => {
-          const section = document.querySelector(selector)
-          if (!section) return 0
-          return smooth(window.innerHeight * 0.88, window.innerHeight * 0.12, -section.getBoundingClientRect().top)
-        }
-        const systemSection = document.querySelector('.system-section')
-        const systemTravel = systemSection ? Math.max(systemSection.offsetHeight - window.innerHeight, 1) : 1
-        const systemProgress = systemSection
-          ? clamp((window.scrollY - systemSection.offsetTop) / systemTravel)
-          : 0
-        const fieldProgress = sectionProgress('.field-section')
-        const networkProgress = sectionProgress('.network-section')
-        const closingProgress = sectionProgress('.closing-section')
-        document.querySelectorAll('.sequence-list article').forEach((row, index) => {
-          const station = 0.18 + index * 0.32
-          const distance = fieldProgress - station
-          const focus = clamp(1 - Math.abs(distance) / 0.22)
-          row.style.setProperty('--sequence-focus', focus)
-          row.style.setProperty('--sequence-shift', `${(0.5 - focus) * 10}px`)
-        })
-        const layerCards = [...document.querySelectorAll('.layer-grid article')]
-        const cardStations = layerCards.map((_, index) => 0.14 + index * 0.24)
-        const activeCardIndex = cardStations.reduce((closestIndex, station, index) => (
-          Math.abs(systemProgress - station) < Math.abs(systemProgress - cardStations[closestIndex])
-            ? index
-            : closestIndex
-        ), 0)
-        layerCards.forEach((card, index) => {
-          const station = cardStations[index]
-          const distance = systemProgress - station
-          const rawFocus = clamp(1 - Math.abs(distance) / 0.18)
-          const isActive = index === activeCardIndex
-          const focus = isActive ? Math.max(rawFocus, 0.86) : rawFocus * 0.16
-          const cardPhase = 0.5 + distance / 0.13
-          const activeOffset = Math.max(-1, Math.min(1, distance / 0.14))
-          card.style.setProperty('--card-focus', focus)
-          card.style.setProperty('--card-opacity', isActive ? '1' : `${0.05 + rawFocus * 0.08}`)
-          card.style.setProperty('--card-scale', `${0.9 + focus * 0.1}`)
-          card.style.setProperty('--card-phase', cardPhase)
-          card.style.setProperty('--card-turn', `${isActive ? -activeOffset * 1.5 : (0.5 - cardPhase) * 5}deg`)
-          card.style.setProperty('--card-vertical', `${isActive ? -activeOffset * 5 : (0.5 - cardPhase) * 42}deg`)
-          card.style.setProperty('--card-depth', `${isActive ? 0 : (0.5 - cardPhase) * 56}px`)
-          card.style.setProperty('--card-rise', `${isActive ? activeOffset * 3 : (0.5 - cardPhase) * 12}px`)
-          card.style.setProperty('--card-z', isActive ? '2' : '1')
-        })
-        root.style.setProperty('--system-intro-y', `${(1 - systemProgress) * 28}px`)
-        root.style.setProperty('--field-image-y', `${(0.5 - fieldProgress) * 46}px`)
-        root.style.setProperty('--field-copy-y', `${(fieldProgress - 0.5) * 30}px`)
-        root.style.setProperty('--network-copy-x', `${(1 - networkProgress) * -34}px`)
-        root.style.setProperty('--network-console-y', `${(1 - networkProgress) * 42}px`)
-        root.style.setProperty('--network-console-tilt', `${(1 - networkProgress) * 3.5}deg`)
-        root.style.setProperty('--closing-orbit-scale', `${0.72 + closingProgress * 0.28}`)
-        root.style.setProperty('--closing-orbit-rotate', `${(1 - closingProgress) * -12}deg`)
-        const nextPhase = progress < .28 ? '0' : progress < .58 ? '1' : '2'
-        if (hero) hero.dataset.scrollPhase = nextPhase
-        setHeroPhase((currentPhase) => currentPhase === nextPhase ? currentPhase : nextPhase)
-        document.body.classList.toggle('has-scrolled', window.scrollY > 30)
-        frame = 0
-      })
+    const setChapterVariables = (chapter, start, entered, leaving, end, progress) => {
+      const entry = smooth(start, entered, progress)
+      const exit = smooth(leaving, end, progress)
+      const visibility = entry * (1 - exit)
+      setVariable(`--phase-${chapter}-alpha`, visibility)
+      setVariable(`--phase-${chapter}-y`, `${(1 - entry) * 76 - exit * 48}px`)
+      setVariable(`--phase-${chapter}-depth`, `${(1 - visibility) * -140}px`)
+      setVariable(`--phase-${chapter}-tilt`, `${(1 - entry) * -9 + exit * 7}deg`)
+      setVariable(`--phase-${chapter}-blur`, `${(1 - visibility) * 12}px`)
+      setVariable(`--phase-${chapter}-clip-top`, `${(1 - entry) * 58}%`)
+      setVariable(`--phase-${chapter}-clip-bottom`, `${exit * 52}%`)
     }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    onScroll()
+
+    const renderHero = (progress) => {
+      const momentum = Math.max(-1, Math.min(1, (progress - previousHeroProgress) * 95))
+      const introExit = smooth(.035, .205, progress)
+      const storyEntrance = smooth(.135, .235, progress)
+      const storyExit = smooth(.89, .985, progress)
+      const storyVisibility = storyEntrance * (1 - storyExit)
+
+      setVariable('--hero-scroll', progress)
+      setVariable('--intro-alpha', 1 - introExit)
+      setVariable('--intro-eyebrow-exit', smooth(.025, .105, progress))
+      setVariable('--intro-title-exit', smooth(.055, .155, progress))
+      setVariable('--intro-copy-exit', smooth(.085, .185, progress))
+      setVariable('--intro-actions-exit', smooth(.11, .215, progress))
+      setVariable('--narrative-alpha', storyVisibility)
+      setVariable('--narrative-y', `${(1 - storyEntrance) * 64 - storyExit * 42 + momentum * -14}px`)
+      setVariable('--narrative-scale', .94 + storyVisibility * .06)
+      setVariable('--chapter-progress', smooth(.18, .9, progress))
+      setVariable('--route-trunk-offset', 1 - smooth(.18, .42, progress))
+      setVariable('--route-branch-offset', 1 - smooth(.4, .69, progress))
+      setVariable('--route-network-offset', 1 - smooth(.66, .91, progress))
+      setVariable('--route-alpha', storyVisibility * .9)
+      setVariable('--route-node-one', smooth(.25, .36, progress) * (1 - smooth(.58, .71, progress) * .35))
+      setVariable('--route-node-two', smooth(.48, .61, progress) * (1 - smooth(.79, .91, progress) * .25))
+      setVariable('--route-node-three', smooth(.7, .84, progress))
+      setVariable('--frame-alpha', storyVisibility)
+      setVariable('--frame-sweep', `${smooth(.17, .91, progress) * 100}%`)
+      setChapterVariables('one', .145, .225, .365, .445, progress)
+      setChapterVariables('two', .36, .445, .625, .71, progress)
+      setChapterVariables('three', .62, .705, .875, .96, progress)
+
+      const nextPhase = progress < .405 ? '0' : progress < .665 ? '1' : '2'
+      if (nextPhase !== currentHeroPhase) {
+        if (hero) hero.dataset.scrollPhase = nextPhase
+        currentHeroPhase = nextPhase
+        setHeroPhase(nextPhase)
+      }
+      hero?.classList.toggle('is-story', progress > .15)
+    }
+
+    const updateSections = () => {
+      const sectionProgress = (section) => {
+        if (!section) return 0
+        const rect = section.getBoundingClientRect()
+        const crossing = (window.innerHeight - rect.top) / (window.innerHeight + rect.height)
+        return smooth(.04, .96, crossing)
+      }
+      const fieldProgress = sectionProgress(fieldSection)
+      const networkProgress = sectionProgress(networkSection)
+      const closingProgress = sectionProgress(closingSection)
+      if (Math.abs(fieldProgress - lastFieldProgress) > .0001) {
+        sequenceRows.forEach((row, index) => {
+          const station = .18 + index * .32
+          const distance = fieldProgress - station
+          const focus = clamp(1 - Math.abs(distance) / .22)
+          row.style.setProperty('--sequence-focus', focus)
+          row.style.setProperty('--sequence-shift', `${(1 - focus) * 8}px`)
+        })
+        setVariable('--field-image-y', `${(.5 - fieldProgress) * 46}px`)
+        setVariable('--field-copy-y', `${(fieldProgress - .5) * 30}px`)
+        lastFieldProgress = fieldProgress
+      }
+      if (Math.abs(networkProgress - lastNetworkProgress) > .0001) {
+        setVariable('--network-copy-x', `${(1 - networkProgress) * -34}px`)
+        setVariable('--network-console-y', `${(1 - networkProgress) * 42}px`)
+        setVariable('--network-console-tilt', `${(1 - networkProgress) * 3.5}deg`)
+        lastNetworkProgress = networkProgress
+      }
+      if (Math.abs(closingProgress - lastClosingProgress) > .0001) {
+        setVariable('--closing-orbit-scale', .72 + closingProgress * .28)
+        setVariable('--closing-orbit-rotate', `${(1 - closingProgress) * -12}deg`)
+        lastClosingProgress = closingProgress
+      }
+    }
+
+    const tick = () => {
+      frame = 0
+      const now = performance.now()
+      const elapsed = Math.min(now - previousFrameTime, 64)
+      previousFrameTime = now
+      const rect = hero?.getBoundingClientRect()
+      const travel = hero ? Math.max(hero.offsetHeight - window.innerHeight, 1) : 1
+      targetHeroProgress = rect ? clamp(-rect.top / travel) : 0
+      const distance = targetHeroProgress - renderedHeroProgress
+      const spring = 1 - Math.pow(.001, elapsed / 1000)
+      renderedHeroProgress = reducedMotion || Math.abs(distance) < .00008
+        ? targetHeroProgress
+        : renderedHeroProgress + distance * spring
+      renderHero(renderedHeroProgress)
+      previousHeroProgress = renderedHeroProgress
+
+      if (sectionUpdatePending) {
+        updateSections()
+        sectionUpdatePending = false
+      }
+
+      const nextHasScrolled = window.scrollY > 30
+      if (nextHasScrolled !== hasScrolled) {
+        document.body.classList.toggle('has-scrolled', nextHasScrolled)
+        hasScrolled = nextHasScrolled
+      }
+
+      if (!reducedMotion && Math.abs(targetHeroProgress - renderedHeroProgress) > .00008) {
+        frame = window.requestAnimationFrame(tick)
+      }
+    }
+
+    const requestTick = () => {
+      sectionUpdatePending = true
+      setVariable('--scroll-y', `${window.scrollY}px`)
+      const pageTravel = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1)
+      setVariable('--page-progress', clamp(window.scrollY / pageTravel))
+      if (!frame) frame = window.requestAnimationFrame(tick)
+    }
+
+    window.addEventListener('scroll', requestTick, { passive: true })
+    window.addEventListener('resize', requestTick)
+    requestTick()
     return () => {
       window.clearTimeout(timer)
       reveal.disconnect()
       window.cancelAnimationFrame(frame)
-      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('scroll', requestTick)
+      window.removeEventListener('resize', requestTick)
     }
   }, [])
 
@@ -251,9 +299,26 @@ function App() {
 
   return (
     <div className="site" id="top">
-      <Suspense fallback={<div className="global-scene-loading"><i /> INITIALIZING SPATIAL NETWORK</div>}><GlobalScene mode="power" /></Suspense>
+      <div className="scroll-narrative" data-phase={heroPhase} aria-live="polite" aria-atomic="true">
+        <div className="narrative-header" aria-hidden="true"><span>DEPLOYMENT PROTOCOL</span><b>0{Number(heroPhase) + 1} / 03</b></div>
+        <div className="narrative-stage">
+          <article className="scroll-phase phase-one" aria-hidden={heroPhase !== '0'}>
+            <p><span>01</span> SOURCE LAYER</p><h2>Aggregate.</h2>
+            <div>Generation, grid, and reserve sources converge on one field-ready Power Pasture site.</div>
+          </article>
+          <article className="scroll-phase phase-two" aria-hidden={heroPhase !== '1'}>
+            <p><span>02</span> CONNECTION STATE</p><h2>Connect.</h2>
+            <div>A mobile compute node connects to conditioned power, closed-loop thermal, and live telemetry.</div>
+          </article>
+          <article className="scroll-phase phase-three" aria-hidden={heroPhase !== '2'}>
+            <p><span>03</span> NETWORK STATE</p><h2>Scale.</h2>
+            <div>Every deployment becomes a reusable node in a distributed infrastructure network.</div>
+          </article>
+        </div>
+        <div className="narrative-rail" aria-hidden="true"><i /><span className="is-one">01</span><span className="is-two">02</span><span className="is-three">03</span></div>
+      </div>
       <div className={`boot-screen ${booted ? 'is-done' : ''}`} aria-hidden="true">
-        <div className="boot-lock"><span className="boot-symbol">H</span><b>HITCH.OS</b><small>INITIALIZING SOVEREIGN COMPUTE</small></div>
+        <div className="boot-lock"><span className="boot-brand" aria-hidden="true"><img src={brandLogo} alt="" /></span><b>POWER PASTURE OS</b><small>INITIALIZING SOVEREIGN COMPUTE</small></div>
         <div className="boot-line"><i /></div>
         <div className="boot-meta"><span>NODE / 001</span><span>SYS.NOMINAL</span></div>
       </div>
@@ -272,40 +337,42 @@ function App() {
       <main>
         <section className="hero">
           <div className="hero-sticky">
-            <img className="hero-image" src={heroImage} alt="Hitch Post infrastructure distributed through a mountain valley" />
-            <div className="hero-telemetry" aria-hidden="true"><span><i /> FEED 04:12:38</span><span>NODE 001 / 04</span><b>98.4%</b></div>
-            <div className="hero-scanline" aria-hidden="true" />
-            <div className="hero-crosshair hero-crosshair-a" aria-hidden="true"><i /><span>GRID / 04</span></div>
-            <div className="hero-crosshair hero-crosshair-b" aria-hidden="true"><i /><span>LIVE LINK</span></div>
-            <div className="hero-grid" aria-hidden="true" />
-            <div className="hero-glow" aria-hidden="true" />
+            <div className="hero-visual">
+              <img className="hero-image" src={heroImage} alt="Power Pasture infrastructure distributed through a mountain valley" />
+              <div className="hero-visual-shade" aria-hidden="true" />
+              <svg className="hero-route-map" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
+                <defs><filter id="route-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter></defs>
+                <path className="route-trunk route-ghost" pathLength="1" d="M168 500 C250 456 324 452 401 394 C472 341 520 327 593 302" />
+                <path className="route-trunk" pathLength="1" d="M168 500 C250 456 324 452 401 394 C472 341 520 327 593 302" />
+                <path className="route-branch route-ghost" pathLength="1" d="M593 302 C655 278 704 245 751 213" />
+                <path className="route-branch" pathLength="1" d="M593 302 C655 278 704 245 751 213" />
+                <path className="route-network route-ghost" pathLength="1" d="M751 213 C806 178 850 158 914 144 M751 213 C822 236 870 273 934 286 M751 213 C754 153 747 118 780 80" />
+                <path className="route-network" pathLength="1" d="M751 213 C806 178 850 158 914 144 M751 213 C822 236 870 273 934 286 M751 213 C754 153 747 118 780 80" />
+                <g className="route-node route-node-one"><circle cx="168" cy="500" r="18" /><circle cx="168" cy="500" r="4" /><text x="188" y="490">SOURCE / 31.4 MW</text></g>
+                <g className="route-node route-node-two"><circle cx="593" cy="302" r="18" /><circle cx="593" cy="302" r="4" /><text x="613" y="292">LINK / NOMINAL</text></g>
+                <g className="route-node route-node-three"><circle cx="751" cy="213" r="18" /><circle cx="751" cy="213" r="4" /><text x="771" y="203">NETWORK / LIVE</text></g>
+              </svg>
+              <div className="hero-grid" aria-hidden="true" />
+              <div className="hero-frame-corners" aria-hidden="true"><i /><i /><i /><i /></div>
+              <div className="hero-frame-meta" aria-hidden="true"><span>POWER PASTURE // TERRAIN MODEL 001</span><span>SCROLL-LINKED FEED // LIVE</span></div>
+              <div className="hero-telemetry" aria-hidden="true"><span><i /> FEED 04:12:38</span><span>NODE 001 / 04</span><b>98.4%</b></div>
+              <div className="hero-scanline" aria-hidden="true" />
+              <div className="hero-crosshair hero-crosshair-a" aria-hidden="true"><i /><span>GRID / 04</span></div>
+              <div className="hero-crosshair hero-crosshair-b" aria-hidden="true"><i /><span>LIVE LINK</span></div>
+              <div className="hero-glow" aria-hidden="true" />
+            </div>
             <div className="hero-copy">
-              <div className="eyebrow hero-eyebrow"><span className="live-dot" /> HITCH POST / POINT 001 <i /> SYSTEM ONLINE</div>
+              <div className="eyebrow hero-eyebrow"><span className="live-dot" /> POWER PASTURE / POINT 001 <i /> SYSTEM ONLINE</div>
               <h1>Compute,<br /><em>unbound.</em></h1>
-              <p>Field-ready power and cooling for mobile AI infrastructure. Pull in, hitch up, and operate.</p>
+              <p>Field-ready power and cooling for mobile AI infrastructure. Pull in, connect, and operate.</p>
               <div className="hero-actions">
                 <button className="primary-button" onClick={() => goTo('#system')}>Explore the system <Icon name="arrow" /></button>
                 <button className="text-button" onClick={() => setWaitlistOpen(true)}>Join the waitlist <span>↗</span></button>
               </div>
             </div>
 
-            <div className="scroll-narrative three-text-fallback" aria-live="polite" aria-atomic="true">
-              <article className="scroll-phase phase-one" aria-hidden={heroPhase !== '0'}>
-                <p><span>01</span> SOURCE LAYER</p><h2>Aggregate.</h2>
-                <div>Generation, grid, and reserve sources converge on one field-ready Hitch Post.</div>
-              </article>
-              <article className="scroll-phase phase-two" aria-hidden={heroPhase !== '1'}>
-                <p><span>02</span> CONNECTION STATE</p><h2>Hitch.</h2>
-                <div>A mobile compute node connects to conditioned power, closed-loop thermal, and live telemetry.</div>
-              </article>
-              <article className="scroll-phase phase-three" aria-hidden={heroPhase !== '2'}>
-                <p><span>03</span> NETWORK STATE</p><h2>Scale.</h2>
-                <div>Every deployment becomes a reusable node in a distributed infrastructure network.</div>
-              </article>
-            </div>
-
             <div className="scroll-state" aria-hidden="true">
-              <span>3D SEQUENCE</span><div><i /><b>00</b><b>01</b><b>02</b><b>03</b></div>
+              <span>SCROLL SEQUENCE</span><div><i /><b>00</b><b>01</b><b>02</b><b>03</b></div>
             </div>
             <div className="hero-foot">
               <span>SCROLL TO CONTROL SYSTEM</span><i />
@@ -315,35 +382,34 @@ function App() {
         </section>
 
         <div className="signal-rail" aria-hidden="true">
-          <div><span>SOVEREIGN POWER</span><i /> <span>ADAPTIVE THERMAL</span><i /> <span>UNIVERSAL HITCH</span><i /> <span>MOBILE COMPUTE</span><i /></div>
-          <div><span>SOVEREIGN POWER</span><i /> <span>ADAPTIVE THERMAL</span><i /> <span>UNIVERSAL HITCH</span><i /> <span>MOBILE COMPUTE</span><i /></div>
+          <div><span>SOVEREIGN POWER</span><i /> <span>ADAPTIVE THERMAL</span><i /> <span>UNIVERSAL LINK</span><i /> <span>MOBILE COMPUTE</span><i /></div>
+          <div><span>SOVEREIGN POWER</span><i /> <span>ADAPTIVE THERMAL</span><i /> <span>UNIVERSAL LINK</span><i /> <span>MOBILE COMPUTE</span><i /></div>
         </div>
 
         <section className="system-section" id="system">
           <div className="system-stage">
             <div className="section-intro" data-reveal>
               <p className="section-code">01 / OPERATING SYSTEM</p>
-              <div><h2>Infrastructure that moves at <em>compute speed.</em></h2><p>Data centers take years. AI demand moves in months. The Hitch Post separates permanent utility infrastructure from movable compute—turning fixed constraints into a flexible network.</p></div>
+              <div><h2>Infrastructure that moves at <em>compute speed.</em></h2><p>Data centers take years. AI demand moves in months. Power Pasture separates permanent utility infrastructure from movable compute—turning fixed constraints into a flexible network.</p></div>
             </div>
 
-            <div className="layer-grid" data-reveal>
+            <div className="layer-grid">
               {layers.map((layer) => (
-                <article key={layer.id}>
-                  <div className="layer-top"><span>{layer.id} / {layer.code}</span><Icon name={layer.icon} size={22} /></div>
-                  <div className="layer-graphic"><span /><i /><i /><i /></div>
+                <article className="system-card" data-reveal data-index={layer.id} key={layer.id}>
+                  <div className="layer-top"><span>{layer.id} / {layer.code}</span><span className="layer-icon"><Icon name={layer.icon} size={20} /></span></div>
+                  <div className="layer-graphic" aria-hidden="true"><span /><i /><i /><i /></div>
                   <h3>{layer.title}</h3>
                   <p>{layer.copy}</p>
                   <small>{layer.stat} <b>↗</b></small>
                 </article>
               ))}
             </div>
-            <div className="system-progress" aria-hidden="true"><span>OPERATING SYSTEM / SEQUENCE</span><i /><b>01</b><b>02</b><b>03</b><b>04</b></div>
           </div>
         </section>
 
         <section className="field-section" id="deployment">
           <div className="field-visual" data-reveal>
-            <img src={fieldImage} alt="A Hitch Post site connected to a mobile compute rig" />
+            <img src={fieldImage} alt="A Power Pasture site connected to a mobile compute rig" />
             <div className="field-shade" />
             <div className="field-scan" />
             <div className="field-route" aria-hidden="true"><i /><i /><i /></div>
@@ -362,6 +428,35 @@ function App() {
           </div>
         </section>
 
+        <section className="geothermal-section" id="thermal" aria-labelledby="geothermal-title" data-reveal>
+          <div className="geothermal-shell">
+            <header className="geothermal-copy">
+              <p className="geothermal-kicker">Closed Loop Systems</p>
+              <h2 id="geothermal-title">Sustainable<br /><em>by design.</em></h2>
+              <p>Our containerized data centers use closed loop geothermal cooling to deliver high performance with minimal environmental impact.</p>
+            </header>
+
+            <figure className="geothermal-product">
+              <img src={geothermalImage} alt="Containerized data center connected to an underground closed-loop geothermal cooling system" />
+              <figcaption><span>Closed loop thermal system</span><b>01</b></figcaption>
+            </figure>
+
+            <div className="geothermal-detail">
+              <div className="geothermal-detail-copy">
+                <p className="geothermal-kicker">Ground loop</p>
+                <h3>Geothermal cooling</h3>
+                <p>A closed loop system circulates fluid through underground pipes, using the Earth’s stable temperature to cool efficiently and reliably year-round.</p>
+              </div>
+
+              <div className="geothermal-features" aria-label="Geothermal cooling benefits">
+                <span><i><Icon name="bolt" size={20} /></i><b>Efficient</b><small>Lower energy use</small></span>
+                <span><i><Icon name="signal" size={20} /></i><b>Quiet</b><small>No noisy cooling towers</small></span>
+                <span><i><Icon name="thermal" size={20} /></i><b>Sustainable</b><small>Reduced carbon impact</small></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section className="network-section" id="network">
           <div className="network-copy" data-reveal>
             <p className="section-code">03 / NETWORK EFFECT</p>
@@ -370,15 +465,15 @@ function App() {
             <button className="outline-button" onClick={() => setWaitlistOpen(true)}>Join deployment waitlist <Icon name="arrow" /></button>
           </div>
           <div className="network-readout" data-reveal>
-            <div className="network-readout-top"><span><i /> LIVE 3D TOPOLOGY</span><b>04 NODES ONLINE</b></div>
+            <div className="network-readout-top"><span><i /> LIVE NETWORK TOPOLOGY</span><b>04 NODES ONLINE</b></div>
             <div className="network-stats"><span><small>AVAILABLE CAPACITY</small><b>31.4 MW</b></span><span><small>FLEET UPTIME</small><b>99.98%</b></span><span><small>ACTIVE RIGS</small><b>03 / 04</b></span></div>
-            <div className="network-legend"><span><i className="power" /> HITCH POST</span><span><i className="compute" /> COMPUTE NODE</span><span><i className="route" /> ACTIVE ROUTE</span></div>
+            <div className="network-legend"><span><i className="power" /> POWER PASTURE</span><span><i className="compute" /> COMPUTE NODE</span><span><i className="route" /> ACTIVE ROUTE</span></div>
           </div>
         </section>
 
         <section className="closing-section" data-reveal>
           <div className="closing-grid" aria-hidden="true" />
-          <div className="closing-orbit" aria-hidden="true"><i /><i /><i /><span>H</span></div>
+          <div className="closing-orbit" aria-hidden="true"><i /><i /><i /><span>P</span></div>
           <p className="eyebrow"><span className="live-dot" /> ACCESS POINT / OPEN</p>
           <h2>Bring compute<br /><em>to the power.</em></h2>
           <p>Ready to see the next infrastructure layer?</p>
@@ -389,8 +484,8 @@ function App() {
 
       <footer>
         <Brand />
-        <p>© 2026 THE HITCH POST NETWORK</p>
-        <div><a href="mailto:hello@thehitchpost.energy">CONTACT ↗</a><a href="#top">BACK TO TOP ↑</a></div>
+        <p>© 2026 POWER PASTURE</p>
+        <div><a href="mailto:hello@powerpasture.energy">CONTACT ↗</a><a href="#top">BACK TO TOP ↑</a></div>
       </footer>
 
       {waitlistOpen && <WaitlistModal onClose={() => setWaitlistOpen(false)} />}
