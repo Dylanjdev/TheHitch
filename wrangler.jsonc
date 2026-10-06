@@ -1,0 +1,31 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "power-pasture",
+  "compatibility_date": "2026-10-02",
+  "workers_dev": true,
+  "routes": [
+    {
+      "pattern": "powerpasture.com/*",
+      "zone_name": "powerpasture.com"
+    },
+    {
+      "pattern": "www.powerpasture.com/*",
+      "zone_name": "powerpasture.com"
+    }
+  ],
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 0.01
+    }
+  }
+}
