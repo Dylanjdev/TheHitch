@@ -5178,16 +5178,28 @@ body.has-scrolled .site-header {
 }
 
 @media (max-width: 480px) {
-  .site-header .header-action {
-    width: 76px;
+  .site-header {
+    gap: 6px;
     padding-inline: 10px;
+  }
+
+  .site-header .header-action {
+    width: 112px;
+    padding-inline: 7px;
     justify-content: center;
-    font-size: 0;
+    font-size: 7.5px;
+    line-height: 1.15;
+    letter-spacing: .05em;
+    white-space: normal;
+    text-align: center;
   }
 
   .site-header .header-action::before {
-    content: "Join";
-    font-size: 11px;
+    content: none;
+  }
+
+  .site-header .header-action svg {
+    display: none;
   }
 }
 
@@ -5316,7 +5328,7 @@ body.has-scrolled .site-header {
   font-style: normal;
 }
 
-.geothermal-copy > p:last-child,
+.geothermal-copy > p:last-of-type,
 .geothermal-detail-copy > p:last-of-type {
   max-width: 520px;
   color: rgba(237, 244, 235, .66);
@@ -5623,7 +5635,7 @@ body.has-scrolled .site-header {
   font-style: normal;
 }
 
-.geothermal-copy > p:last-child {
+.geothermal-copy > p:last-of-type {
   max-width: 720px;
   margin: 0 auto;
   color: #a1a1a6;
@@ -5631,6 +5643,11 @@ body.has-scrolled .site-header {
   font-weight: 450;
   line-height: 1.48;
   letter-spacing: -.025em;
+}
+
+.geothermal-copy .geothermal-cta {
+  width: max-content;
+  margin: 36px auto 0;
 }
 
 .geothermal-product {
@@ -5805,8 +5822,12 @@ body.has-scrolled .site-header {
     font-size: clamp(3.55rem, 18vw, 5.2rem);
   }
 
-  .geothermal-copy > p:last-child {
+  .geothermal-copy > p:last-of-type {
     margin: 0;
+  }
+
+  .geothermal-copy .geothermal-cta {
+    margin: 30px 0 0;
   }
 
   .geothermal-product {
@@ -8657,5 +8678,35 @@ body.has-scrolled .site-header {
 
   .scroll-phase[aria-hidden="false"] {
     animation: none;
+  }
+}
+
+/* The hero is intentionally static: the former three-step scroll sequence was removed. */
+.hero {
+  min-height: 100svh;
+}
+
+.hero-sticky {
+  position: relative;
+  top: auto;
+  height: auto;
+  min-height: 100svh;
+}
+
+.hero-image {
+  transform: none;
+  will-change: auto;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: 100svh;
+  }
+
+  .hero-sticky {
+    height: auto;
+    min-height: 100svh;
+    padding-top: 92px;
+    padding-bottom: 36px;
   }
 }

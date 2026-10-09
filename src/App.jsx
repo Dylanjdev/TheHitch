@@ -56,11 +56,12 @@ const layers = [
 ]
 
 const applications = [
-  { id: '01', title: 'Home developments', copy: 'Local renewable generation planned alongside homes, roads, utilities, and growing communities.' },
-  { id: '02', title: 'Hospitals', copy: 'Resilient energy infrastructure for facilities that depend on continuous, dependable operation.' },
-  { id: '03', title: 'Data centers', copy: 'High-demand digital infrastructure deployed closer to abundant, locally produced energy.' },
+  { id: '01', title: 'Data centers', copy: 'High-demand digital infrastructure deployed closer to abundant, locally produced energy.' },
+  { id: '02', title: 'Home developments', copy: 'Local renewable generation planned alongside homes, roads, utilities, and growing communities.' },
+  { id: '03', title: 'Hospitals', copy: 'Resilient energy infrastructure for facilities that depend on continuous, dependable operation.' },
   { id: '04', title: 'Office buildings', copy: 'Adaptable energy systems for commercial campuses and the organizations they support.' },
   { id: '05', title: 'Shopping centers', copy: 'Scalable generation for retail destinations, mixed-use sites, and their surrounding services.' },
+  { id: '06', title: 'Manufacturing & industrial', copy: 'Continuous, high-density power and process heat for manufacturing, cold storage, and heavy industrial operations.' },
 ]
 
 function Icon({ name, size = 20 }) {
@@ -212,7 +213,7 @@ function Brand() {
   )
 }
 
-function WaitlistModal({ onClose }) {
+function InquiryModal({ onClose }) {
   const [sent, setSent] = useState(false)
 
   useEffect(() => {
@@ -227,27 +228,27 @@ function WaitlistModal({ onClose }) {
 
   return (
     <div className="modal-backdrop" onMouseDown={onClose}>
-      <div className="modal-panel" role="dialog" aria-modal="true" aria-labelledby="waitlist-title" onMouseDown={(event) => event.stopPropagation()}>
+      <div className="modal-panel" role="dialog" aria-modal="true" aria-labelledby="inquiry-title" onMouseDown={(event) => event.stopPropagation()}>
         <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="close" /></button>
         <div className="modal-status"><i /> SECURE CHANNEL / OPEN</div>
         {!sent ? (
           <>
-            <p className="eyebrow">EARLY ACCESS</p>
-            <h2 id="waitlist-title">Join the network.</h2>
-            <p className="modal-copy">Join the Power Pasture™ waitlist for deployment updates, project news, and early access opportunities.</p>
+            <p className="eyebrow">PROJECT INQUIRY</p>
+            <h2 id="inquiry-title">Get your Power Pasture.</h2>
+            <p className="modal-copy">Tell us about your organization and energy needs. We’ll follow up to explore what your site can support.</p>
             <form onSubmit={(event) => { event.preventDefault(); setSent(true) }}>
               <label>NAME<input name="name" required autoFocus placeholder="Your name" /></label>
               <label>WORK EMAIL<input name="email" required type="email" placeholder="you@company.com" /></label>
               <label>ORGANIZATION<input name="organization" placeholder="Company or fund" /></label>
-              <button className="primary-button full" type="submit">Join the waitlist <Icon name="arrow" /></button>
+              <button className="primary-button full" type="submit">Submit inquiry <Icon name="arrow" /></button>
             </form>
           </>
         ) : (
           <div className="success-state">
             <span><Icon name="check" size={28} /></span>
-            <p className="eyebrow">WAITLIST CONFIRMED</p>
-            <h2>You’re on the list.</h2>
-            <p>We’ll keep you updated as the Power Pasture™ platform develops.</p>
+            <p className="eyebrow">INQUIRY RECEIVED</p>
+            <h2>Thank you.</h2>
+            <p>We’ll be in touch to discuss your Power Pasture™.</p>
             <button className="text-button" onClick={onClose}>Return to system <Icon name="arrow" /></button>
           </div>
         )}
@@ -258,7 +259,7 @@ function WaitlistModal({ onClose }) {
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [waitlistOpen, setWaitlistOpen] = useState(false)
+  const [inquiryOpen, setInquiryOpen] = useState(false)
   const [booted, setBooted] = useState(false)
   const [bootMode] = useState(() => {
     try {
@@ -267,7 +268,6 @@ function App() {
       return 'first'
     }
   })
-  const [heroPhase, setHeroPhase] = useState('0')
   const connectorLayerRef = useRef(null)
   const hydroRef = useRef(null)
   const geothermalRef = useRef(null)
@@ -285,14 +285,7 @@ function App() {
       // The intro still works when browser storage is unavailable.
     }
     const root = document.documentElement
-    const hero = document.querySelector('.hero')
-    const networkSection = document.querySelector('.network-section')
-    const closingSection = document.querySelector('.closing-section')
     const clamp = (value) => Math.max(0, Math.min(1, value))
-    const smooth = (start, end, value) => {
-      const point = clamp((value - start) / (end - start))
-      return point * point * (3 - 2 * point)
-    }
     const setVariable = (name, value) => root.style.setProperty(name, value)
     const mobileViewport = window.matchMedia('(max-width: 768px)').matches
     const revealTargets = [...document.querySelectorAll('[data-reveal]')]
@@ -322,137 +315,10 @@ function App() {
     }
 
     let frame = 0
-    let targetHeroProgress = 0
-    let renderedHeroProgress = 0
-    let previousHeroProgress = 0
-    let previousFrameTime = performance.now()
-    let currentHeroPhase = '0'
     let hasScrolled = false
-    let sectionUpdatePending = true
-    let lastNetworkProgress = -1
-    let lastClosingProgress = -1
-
-    const setChapterVariables = (chapter, start, entered, leaving, end, progress) => {
-      const entry = smooth(start, entered, progress)
-      const exit = smooth(leaving, end, progress)
-      const visibility = entry * (1 - exit)
-      setVariable(`--phase-${chapter}-alpha`, visibility)
-      setVariable(`--phase-${chapter}-y`, `${(1 - entry) * 42 - exit * 28}px`)
-      setVariable(`--phase-${chapter}-depth`, `${(1 - visibility) * -34}px`)
-      setVariable(`--phase-${chapter}-tilt`, `${(1 - entry) * -2.4 + exit * 1.6}deg`)
-      setVariable(`--phase-${chapter}-blur`, `${(1 - visibility) * 7}px`)
-      setVariable(`--phase-${chapter}-clip-top`, `${(1 - entry) * 34}%`)
-      setVariable(`--phase-${chapter}-clip-bottom`, `${exit * 30}%`)
-      setVariable(`--phase-${chapter}-label-x`, `${(1 - entry) * 16 - exit * 8}px`)
-      setVariable(`--phase-${chapter}-title-x`, `${(1 - entry) * 25 - exit * 12}px`)
-      setVariable(`--phase-${chapter}-copy-x`, `${(1 - entry) * 34 - exit * 16}px`)
-    }
-
-    const renderHero = (progress) => {
-      const momentum = Math.max(-1, Math.min(1, (progress - previousHeroProgress) * 95))
-      const introExit = smooth(.035, .205, progress)
-      const storyEntrance = smooth(.135, .235, progress)
-      const storyExit = smooth(.89, .985, progress)
-      const storyVisibility = storyEntrance * (1 - storyExit)
-      const imageTravel = smooth(0, .98, progress)
-      const eyebrowExit = smooth(.025, .105, progress)
-      const titleExit = smooth(.055, .155, progress)
-      const copyExit = smooth(.085, .185, progress)
-      const actionsExit = smooth(.11, .215, progress)
-      const chapterProgress = smooth(.18, .9, progress)
-
-      setVariable('--hero-scroll', progress)
-      setVariable('--hero-image-y', `${imageTravel * -46}px`)
-      setVariable('--hero-image-y-mobile', `${imageTravel * -24}px`)
-      setVariable('--hero-image-x-mobile', `${imageTravel * -10}px`)
-      setVariable('--hero-image-scale', 1.035 + imageTravel * .055)
-      setVariable('--hero-image-scale-mobile', 1.025 + imageTravel * .035)
-      setVariable('--hero-light-x', `${74 - imageTravel * 22}%`)
-      setVariable('--hero-light-y', `${42 + imageTravel * 8}%`)
-      setVariable('--hero-light-alpha', .1 + storyVisibility * .2)
-      setVariable('--intro-alpha', 1 - introExit)
-      setVariable('--intro-eyebrow-exit', eyebrowExit)
-      setVariable('--intro-title-exit', titleExit)
-      setVariable('--intro-copy-exit', copyExit)
-      setVariable('--intro-actions-exit', actionsExit)
-      setVariable('--intro-eyebrow-y', `${eyebrowExit * -14}px`)
-      setVariable('--intro-title-y', `${titleExit * -34}px`)
-      setVariable('--intro-copy-y', `${copyExit * -24}px`)
-      setVariable('--intro-actions-y', `${actionsExit * -16}px`)
-      setVariable('--narrative-alpha', storyVisibility)
-      setVariable('--narrative-y', `${(1 - storyEntrance) * 64 - storyExit * 42 + momentum * -14}px`)
-      setVariable('--narrative-x', `${(1 - storyEntrance) * -12 + storyExit * 8}px`)
-      setVariable('--narrative-tilt', `${momentum * -.7}deg`)
-      setVariable('--narrative-scale', .94 + storyVisibility * .06)
-      setVariable('--chapter-progress', chapterProgress)
-      setVariable('--chapter-position', `${chapterProgress * 100}%`)
-      setVariable('--route-trunk-offset', 1 - smooth(.18, .42, progress))
-      setVariable('--route-branch-offset', 1 - smooth(.4, .69, progress))
-      setVariable('--route-network-offset', 1 - smooth(.66, .91, progress))
-      setVariable('--route-alpha', storyVisibility * .9)
-      setVariable('--route-node-one', smooth(.25, .36, progress) * (1 - smooth(.58, .71, progress) * .35))
-      setVariable('--route-node-two', smooth(.48, .61, progress) * (1 - smooth(.79, .91, progress) * .25))
-      setVariable('--route-node-three', smooth(.7, .84, progress))
-      setVariable('--route-y', `${imageTravel * -12}px`)
-      setVariable('--route-scale', 1 + imageTravel * .012)
-      setVariable('--frame-alpha', storyVisibility)
-      setVariable('--frame-scale', 1.018 - storyVisibility * .018 + storyExit * .008)
-      setVariable('--frame-sweep', `${smooth(.17, .91, progress) * 100}%`)
-      setChapterVariables('one', .145, .225, .365, .445, progress)
-      setChapterVariables('two', .36, .445, .625, .71, progress)
-      setChapterVariables('three', .62, .705, .875, .96, progress)
-
-      const nextPhase = progress < .405 ? '0' : progress < .665 ? '1' : '2'
-      if (nextPhase !== currentHeroPhase) {
-        if (hero) hero.dataset.scrollPhase = nextPhase
-        currentHeroPhase = nextPhase
-        setHeroPhase(nextPhase)
-      }
-      hero?.classList.toggle('is-story', progress > .15)
-    }
-
-    const updateSections = () => {
-      const sectionProgress = (section) => {
-        if (!section) return 0
-        const rect = section.getBoundingClientRect()
-        const crossing = (window.innerHeight - rect.top) / (window.innerHeight + rect.height)
-        return smooth(.04, .96, crossing)
-      }
-      const networkProgress = sectionProgress(networkSection)
-      const closingProgress = sectionProgress(closingSection)
-      if (Math.abs(networkProgress - lastNetworkProgress) > .0001) {
-        setVariable('--network-copy-x', `${(1 - networkProgress) * -34}px`)
-        setVariable('--network-console-y', `${(1 - networkProgress) * 42}px`)
-        setVariable('--network-console-tilt', `${(1 - networkProgress) * 3.5}deg`)
-        lastNetworkProgress = networkProgress
-      }
-      if (Math.abs(closingProgress - lastClosingProgress) > .0001) {
-        setVariable('--closing-orbit-scale', .72 + closingProgress * .28)
-        setVariable('--closing-orbit-rotate', `${(1 - closingProgress) * -12}deg`)
-        lastClosingProgress = closingProgress
-      }
-    }
 
     const tick = () => {
       frame = 0
-      const now = performance.now()
-      const elapsed = Math.min(now - previousFrameTime, 64)
-      previousFrameTime = now
-      const rect = hero?.getBoundingClientRect()
-      const travel = hero ? Math.max(hero.offsetHeight - window.innerHeight, 1) : 1
-      targetHeroProgress = rect ? clamp(-rect.top / travel) : 0
-      const distance = targetHeroProgress - renderedHeroProgress
-      const spring = 1 - Math.pow(.001, elapsed / 1000)
-      renderedHeroProgress = reducedMotion || Math.abs(distance) < .00008
-        ? targetHeroProgress
-        : renderedHeroProgress + distance * spring
-      renderHero(renderedHeroProgress)
-      previousHeroProgress = renderedHeroProgress
-
-      if (sectionUpdatePending) {
-        updateSections()
-        sectionUpdatePending = false
-      }
 
       const nextHasScrolled = window.scrollY > 30
       if (nextHasScrolled !== hasScrolled) {
@@ -460,13 +326,9 @@ function App() {
         hasScrolled = nextHasScrolled
       }
 
-      if (!reducedMotion && Math.abs(targetHeroProgress - renderedHeroProgress) > .00008) {
-        frame = window.requestAnimationFrame(tick)
-      }
     }
 
     const requestTick = () => {
-      sectionUpdatePending = true
       setVariable('--scroll-y', `${window.scrollY}px`)
       const pageTravel = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1)
       setVariable('--page-progress', clamp(window.scrollY / pageTravel))
@@ -515,7 +377,6 @@ function App() {
 
     const drawPath = (source, path, layerRect, hubRect) => {
       const hubCenterX = hubRect.left - layerRect.left + hubRect.width / 2
-      const hubCenterY = hubRect.top - layerRect.top + hubRect.height / 2
       const sourceRect = source.getBoundingClientRect()
       const sourceCenterX = sourceRect.left - layerRect.left + sourceRect.width / 2
       const sourceCenterY = sourceRect.top - layerRect.top + sourceRect.height / 2
@@ -583,24 +444,6 @@ function App() {
 
   return (
     <div className="site" id="top">
-      <div className="scroll-narrative" data-phase={heroPhase} aria-live="polite" aria-atomic="true">
-        <div className="narrative-header" aria-hidden="true"><span>DEPLOYMENT PROTOCOL</span><b>0{Number(heroPhase) + 1} / 03</b></div>
-        <div className="narrative-stage">
-          <article className="scroll-phase phase-one" aria-hidden={heroPhase !== '0'}>
-            <p><span>01 /</span> RESOURCE / IDENTIFIED</p><h2>Harvest.</h2>
-            <div>Identify and harvest local renewable energy—geothermal, hydro, solar, and wind.</div>
-          </article>
-          <article className="scroll-phase phase-two" aria-hidden={heroPhase !== '1'}>
-            <p><span>02 /</span> MODULE / CONNECTED</p><h2>Hookup.</h2>
-            <div>Connect modular infrastructure directly to the site’s energy-producing foundation.</div>
-          </article>
-          <article className="scroll-phase phase-three" aria-hidden={heroPhase !== '2'}>
-            <p><span>03 /</span> SITE / ENERGIZED</p><h2>Power.</h2>
-            <div>Energize the site while keeping the workload adaptable as technology and demand evolve.</div>
-          </article>
-        </div>
-        <div className="narrative-rail" aria-hidden="true"><i /><span className="is-one">01</span><span className="is-two">02</span><span className="is-three">03</span></div>
-      </div>
       <div className={`boot-screen is-${bootMode} ${booted ? 'is-done' : ''}`} aria-hidden="true">
         <div className="boot-field"><i /><i /><i /><span /></div>
         <div className="boot-stage">
@@ -625,7 +468,7 @@ function App() {
           <button onClick={() => goTo('#system')}>Model</button>
           <button onClick={() => goTo('#applications')}>Applications</button>
         </nav>
-        <button className="header-action" onClick={() => setWaitlistOpen(true)}>Join the waitlist <Icon name="arrow" size={17} /></button>
+        <button className="header-action" onClick={() => setInquiryOpen(true)}>GET YOUR POWER PASTURE <Icon name="arrow" size={17} /></button>
         <button className="menu-button" onClick={() => setMenuOpen((open) => !open)} aria-label="Toggle navigation"><Icon name={menuOpen ? 'close' : 'menu'} /></button>
       </header>
 
@@ -635,34 +478,7 @@ function App() {
             <div className="hero-visual">
               <img className="hero-image" src={heroImage} alt="Power Pasture™ infrastructure distributed through a mountain valley" />
               <div className="hero-visual-shade" aria-hidden="true" />
-              <svg className="hero-route-map hero-route-map-desktop" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
-                <defs><filter id="route-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter></defs>
-                <path className="route-trunk route-ghost" pathLength="1" d="M168 500 C250 456 324 452 401 394 C472 341 520 327 593 302" />
-                <path className="route-trunk" pathLength="1" d="M168 500 C250 456 324 452 401 394 C472 341 520 327 593 302" />
-                <path className="route-branch route-ghost" pathLength="1" d="M593 302 C655 278 704 245 751 213" />
-                <path className="route-branch" pathLength="1" d="M593 302 C655 278 704 245 751 213" />
-                <path className="route-network route-ghost" pathLength="1" d="M751 213 C806 178 850 158 914 144 M751 213 C822 236 870 273 934 286 M751 213 C754 153 747 118 780 80" />
-                <path className="route-network" pathLength="1" d="M751 213 C806 178 850 158 914 144 M751 213 C822 236 870 273 934 286 M751 213 C754 153 747 118 780 80" />
-                <g className="route-node route-node-one"><circle cx="168" cy="500" r="18" /><circle cx="168" cy="500" r="4" /><text x="188" y="490">01 / RESOURCE / IDENTIFIED</text></g>
-                <g className="route-node route-node-two"><circle cx="593" cy="302" r="18" /><circle cx="593" cy="302" r="4" /><text x="613" y="292">02 / MODULE / CONNECTED</text></g>
-                <g className="route-node route-node-three"><circle cx="751" cy="213" r="18" /><circle cx="751" cy="213" r="4" /><text x="771" y="203">03 / SITE / ENERGIZED</text></g>
-              </svg>
-              <svg className="hero-route-map hero-route-map-mobile" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-                <defs><filter id="route-glow-mobile" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter></defs>
-                <path className="route-trunk route-ghost" pathLength="1" d="M72 690 C102 635 126 570 164 516 S214 470 242 446" />
-                <path className="route-trunk" pathLength="1" d="M72 690 C102 635 126 570 164 516 S214 470 242 446" />
-                <path className="route-branch route-ghost" pathLength="1" d="M242 446 C280 432 316 414 346 400" />
-                <path className="route-branch" pathLength="1" d="M242 446 C280 432 316 414 346 400" />
-                <path className="route-network route-ghost" pathLength="1" d="M346 400 C370 366 380 332 388 295 M346 400 C370 413 385 431 402 456 M346 400 C326 368 310 340 306 303" />
-                <path className="route-network" pathLength="1" d="M346 400 C370 366 380 332 388 295 M346 400 C370 413 385 431 402 456 M346 400 C326 368 310 340 306 303" />
-                <g className="route-node route-node-one"><circle cx="72" cy="690" r="16" /><circle cx="72" cy="690" r="4" /><text x="94" y="684">01 / RESOURCE / IDENTIFIED</text></g>
-                <g className="route-node route-node-two"><circle cx="242" cy="446" r="16" /><circle cx="242" cy="446" r="4" /><text x="96" y="470">02 / MODULE / CONNECTED</text></g>
-                <g className="route-node route-node-three"><circle cx="346" cy="400" r="16" /><circle cx="346" cy="400" r="4" /><text x="322" y="404" textAnchor="end">03 / SITE / ENERGIZED</text></g>
-              </svg>
               <div className="hero-grid" aria-hidden="true" />
-              <div className="hero-frame-corners" aria-hidden="true"><i /><i /><i /><i /></div>
-              <div className="hero-frame-meta" aria-hidden="true"><span>POWER PASTURE™ // TERRAIN MODEL 001</span><span>SCROLL-LINKED FEED // LIVE</span></div>
-              <div className="hero-telemetry" aria-hidden="true"><span><i /> RESOURCE IDENTIFIED</span><span>MODULE / CONNECTED</span><b>ENERGIZED</b></div>
               <div className="hero-scanline" aria-hidden="true" />
               <div className="hero-crosshair hero-crosshair-a" aria-hidden="true"><i /><span>GRID / 04</span></div>
               <div className="hero-crosshair hero-crosshair-b" aria-hidden="true"><i /><span>LIVE LINK</span></div>
@@ -698,27 +514,14 @@ function App() {
                 <span ref={hydroRef} className="hero-source-inline hero-source-inline-hydro" aria-hidden="true">
                   <Icon name="hydro" size={18} /><span><b>Hydro</b><small>Dense generation</small></span>
                 </span>
+                <span ref={geothermalRef} className="hero-source-inline hero-source-inline-geothermal" aria-hidden="true">
+                  <Icon name="geothermal" size={18} /><span><b>Geothermal</b><small>Steady resource</small></span>
+                </span>
               </div>
-              <h1>Unifying renewable energy<br /><em>to power the biggest consumers.</em></h1>
-              <p>Power Pasture™ brings geothermal, hydro, solar, and wind together in site-specific energy systems built around real local potential and real-world demand.</p>
-              <div className="hero-actions">
-                <button className="primary-button" onClick={() => goTo('#system')}>Build your Power Pasture™ <Icon name="arrow" /></button>
-                <div className="hero-secondary-action">
-                  <button className="text-button" onClick={() => setWaitlistOpen(true)}>Start a conversation <span>↗</span></button>
-                  <span ref={geothermalRef} className="hero-source-inline hero-source-inline-geothermal" aria-hidden="true">
-                    <Icon name="geothermal" size={18} /><span><b>Geothermal</b><small>Steady resource</small></span>
-                  </span>
-                </div>
-              </div>
+              <h1>Unifying renewable energy<br /><em>to power the world’s consumers.</em></h1>
+              <p>Power Pasture™ brings geothermal, hydro, solar, and wind together to serve real-world demand.</p>
             </div>
 
-            <div className="scroll-state" aria-hidden="true">
-              <span>SCROLL SEQUENCE</span><div><i /><b>00</b><b>01</b><b>02</b><b>03</b></div>
-            </div>
-            <div className="hero-foot">
-              <span>SCROLL TO CONTROL SYSTEM</span><i />
-              <div><span>37.2382° N</span><span>81.2964° W</span></div>
-            </div>
           </div>
         </section>
 
@@ -729,7 +532,15 @@ function App() {
           </div>
           <div className="power-index-grid">
             {[...layers].reverse().map((layer) => (
-              <details key={layer.id}>
+              <details
+                key={layer.id}
+                onMouseEnter={(event) => {
+                  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) event.currentTarget.open = true
+                }}
+                onMouseLeave={(event) => {
+                  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) event.currentTarget.open = false
+                }}
+              >
                 <summary>
                   <span className="power-index-icon"><Icon name={layer.icon} size={30} /></span>
                   <span><b>{layer.title}</b><small>{layer.potential}</small></span>
@@ -780,9 +591,10 @@ function App() {
         <section className="geothermal-section" id="thermal" aria-labelledby="geothermal-title" data-reveal>
           <div className="geothermal-shell">
             <header className="geothermal-copy">
-              <p className="geothermal-kicker">Geothermal opportunity</p>
-              <h2 id="geothermal-title">Stable by nature.<br /><em>Built to last.</em></h2>
-              <p>Geothermal can provide dependable energy and thermal resources while becoming a long-lived component of a site’s infrastructure.</p>
+              <p className="geothermal-kicker">The geothermal advantage</p>
+              <h2 id="geothermal-title">Available beneath the surface.<br /><em>Built to last.</em></h2>
+              <p>Geothermal delivers consistent, around-the-clock energy and thermal capacity—creating a durable foundation for infrastructure that must perform in every season.</p>
+              <button className="primary-button large geothermal-cta" onClick={() => setInquiryOpen(true)}>GET YOUR POWER PASTURE <Icon name="arrow" /></button>
             </header>
 
             <figure className="geothermal-product">
@@ -806,42 +618,14 @@ function App() {
           </div>
         </section>
 
-        <section className="network-section" id="platform">
-          <div className="network-copy" data-reveal>
-            <p className="section-code">02 / PLATFORM ARCHITECTURE</p>
-            <h2>Bring infrastructure<br />to the <em>power.</em></h2>
-            <p>Power Pasture™ separates the long-lived energy asset from the technology it serves. That makes it possible to deploy technical capacity where energy is available—and change that capacity without rebuilding the entire site.</p>
-            <button className="outline-button" onClick={() => goTo('#applications')}>Explore applications <Icon name="arrow" /></button>
-          </div>
-          <div className="platform-stack" data-reveal aria-label="Power Pasture™ platform architecture">
-            <article>
-              <span>01 / FOUNDATION</span>
-              <div><h3>Power Pasture™</h3><p>The energy-producing site and local renewable resource foundation.</p></div>
-              <small>Persistent asset</small>
-            </article>
-            <i aria-hidden="true"><Icon name="arrow" size={18} /></i>
-            <article>
-              <span>02 / SITE LAYER</span>
-              <div><h3>Prepared infrastructure</h3><p>The permanent systems that ready a location for deployable technology.</p></div>
-              <small>Deployment ready</small>
-            </article>
-            <i aria-hidden="true"><Icon name="arrow" size={18} /></i>
-            <article>
-              <span>03 / WORKLOAD</span>
-              <div><h3>Outpost</h3><p>Modular technical infrastructure selected for customer or project requirements.</p></div>
-              <small>Adaptable layer</small>
-            </article>
-          </div>
-        </section>
-
         <section className="applications-section" id="applications">
           <div className="applications-shell">
             <header className="applications-heading" data-reveal>
               <div>
-                <p className="section-code">03 / LIMITLESS APPLICATIONS</p>
+                <p className="section-code">02 / LIMITLESS APPLICATIONS</p>
                 <h2>Limitless<br /><em>applications.</em></h2>
               </div>
-              <p>Renewable energy should meet demand where it lives. A Power Pasture™ can be shaped to support homes, hospitals, data centers, offices, retail, and the next application a community needs.</p>
+              <p>Power Pasture™ delivers the scalable, resilient energy foundation for the infrastructure that powers modern life—from data centers, home developments, hospitals, offices, and shopping centers to advanced manufacturing, cold storage, and heavy industrial operations.</p>
             </header>
 
             <div className="applications-grid">
@@ -860,21 +644,6 @@ function App() {
             </div>
           </div>
         </section>
-
-        <section className="closing-section" data-reveal>
-          <div className="closing-grid" aria-hidden="true" />
-          <div className="closing-orbit" aria-hidden="true"><i /><i /><i /><span>P</span></div>
-          <p className="eyebrow"><span className="live-dot" /> LEE COUNTY</p>
-          <h2>Prove it locally.<br /><em>Build it to travel.</em></h2>
-          <p>Lee County is the proving ground: a real-world environment for renewable energy, technical infrastructure, research, workforce development, and future commercial applications.</p>
-          <div className="proof-points">
-            <article><span>01</span><div><b>Demonstrate</b><small>Integrate local energy and deployable infrastructure.</small></div></article>
-            <article><span>02</span><div><b>Learn</b><small>Build operating knowledge, research, and workforce capability.</small></div></article>
-            <article><span>03</span><div><b>Repeat</b><small>Carry a proven framework into other energy-rich communities.</small></div></article>
-          </div>
-          <button className="primary-button large" onClick={() => setWaitlistOpen(true)}>Join the waitlist <Icon name="arrow" /></button>
-          <div className="closing-meta"><span>ENERGY / LAND / INFRASTRUCTURE</span><span>APPALACHIA → ENERGY-RICH COMMUNITIES</span></div>
-        </section>
       </main>
 
       <footer>
@@ -883,7 +652,7 @@ function App() {
         <div><a href="mailto:hello@powerpasture.energy">CONTACT ↗</a><a href="#top">BACK TO TOP ↑</a></div>
       </footer>
 
-      {waitlistOpen && <WaitlistModal onClose={() => setWaitlistOpen(false)} />}
+      {inquiryOpen && <InquiryModal onClose={() => setInquiryOpen(false)} />}
     </div>
   )
 }
