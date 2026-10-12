@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import heroImage from './assets/Hero.webp'
-import geothermalImage from './assets/GeoThermalRepresentation.png'
-import brandLogo from './assets/PowerPastureLogo-tm.png'
+import heroVideo from './assets/HeroVid.mp4'
+import geothermalImage from './assets/GeoThermalRepresentation.webp'
+import brandLogo from './assets/PowerPastureLogo-tm.webp'
 import './App.css'
 
 const layers = [
@@ -206,8 +207,8 @@ function EnergyArt({ type }) {
 
 function Brand() {
   return (
-    <a className="brand" href="#top" aria-label="Power Pasture™ home">
-      <span className="brand-mark" aria-hidden="true"><img src={brandLogo} alt="" /></span>
+    <a className="brand" href="#top">
+      <span className="brand-mark" aria-hidden="true"><img src={brandLogo} alt="" width="384" height="256" decoding="async" /></span>
       <span><b>POWER PASTURE™</b><small>LOCAL ENERGY INFRASTRUCTURE</small></span>
     </a>
   )
@@ -215,40 +216,114 @@ function Brand() {
 
 function InquiryModal({ onClose }) {
   const [sent, setSent] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const panelRef = useRef(null)
+  const returnFocusRef = useRef(document.activeElement)
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    const form = event.currentTarget
+    setSubmitting(true)
+    setSubmitError('')
+
+    try {
+      const response = await fetch(form.action, {
+        method: form.method,
+        body: new FormData(form),
+        headers: { Accept: 'application/json' },
+      })
+
+      if (!response.ok) {
+        const result = await response.json().catch(() => null)
+        const formspreeMessage = result?.errors?.map(({ message }) => message).filter(Boolean).join(' ')
+        throw new Error(
+          response.status === 429
+            ? 'Too many requests. Please wait a moment and try again.'
+            : formspreeMessage || 'We could not send your inquiry. Please try again.',
+        )
+      }
+
+      setSent(true)
+    } catch (error) {
+      setSubmitError(error.message || 'We could not send your inquiry. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   useEffect(() => {
-    const onKey = (event) => event.key === 'Escape' && onClose()
-    window.addEventListener('keydown', onKey)
+    const panel = panelRef.current
+    const previousFocus = returnFocusRef.current
+    const focusableSelector = 'button:not([disabled]), input:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
+    const onKey = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        onClose()
+        return
+      }
+      if (event.key !== 'Tab' || !panel) return
+      const focusable = [...panel.querySelectorAll(focusableSelector)]
+      if (!focusable.length) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+    document.addEventListener('keydown', onKey)
     document.body.classList.add('modal-open')
+    window.requestAnimationFrame(() => panel?.querySelector(focusableSelector)?.focus())
     return () => {
-      window.removeEventListener('keydown', onKey)
+      document.removeEventListener('keydown', onKey)
       document.body.classList.remove('modal-open')
+      previousFocus?.focus?.()
     }
   }, [onClose])
 
   return (
     <div className="modal-backdrop" onMouseDown={onClose}>
-      <div className="modal-panel" role="dialog" aria-modal="true" aria-labelledby="inquiry-title" onMouseDown={(event) => event.stopPropagation()}>
-        <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="close" /></button>
+      <div
+        ref={panelRef}
+        className="modal-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={sent ? 'inquiry-success-title' : 'inquiry-title'}
+        aria-describedby={sent ? 'inquiry-success-copy' : 'inquiry-copy'}
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        <button className="modal-close" onClick={onClose} aria-label="Close inquiry dialog"><Icon name="close" /></button>
         <div className="modal-status"><i /> SECURE CHANNEL / OPEN</div>
         {!sent ? (
           <>
             <p className="eyebrow">PROJECT INQUIRY</p>
             <h2 id="inquiry-title">Get your Power Pasture.</h2>
-            <p className="modal-copy">Tell us about your organization and energy needs. We’ll follow up to explore what your site can support.</p>
-            <form onSubmit={(event) => { event.preventDefault(); setSent(true) }}>
-              <label>NAME<input name="name" required autoFocus placeholder="Your name" /></label>
-              <label>WORK EMAIL<input name="email" required type="email" placeholder="you@company.com" /></label>
-              <label>ORGANIZATION<input name="organization" placeholder="Company or fund" /></label>
-              <button className="primary-button full" type="submit">Submit inquiry <Icon name="arrow" /></button>
+            <p className="modal-copy" id="inquiry-copy">Tell us about your organization and energy needs. We’ll follow up to explore what your site can support.</p>
+            <form
+              action="https://formspree.io/f/xbgdabkr"
+              method="POST"
+              onSubmit={handleSubmit}
+              aria-busy={submitting}
+            >
+              <label>NAME<input name="name" required autoComplete="name" placeholder="Your name" /></label>
+              <label>WORK EMAIL<input name="email" required type="email" autoComplete="email" placeholder="you@company.com" /></label>
+              <label>ORGANIZATION<input name="organization" autoComplete="organization" placeholder="Company or fund" /></label>
+              {submitError && <p className="inquiry-error" role="alert">{submitError}</p>}
+              <button className="primary-button full" type="submit" disabled={submitting}>
+                {submitting ? 'Sending inquiry…' : <>Submit inquiry <Icon name="arrow" /></>}
+              </button>
             </form>
           </>
         ) : (
-          <div className="success-state">
+          <div className="success-state" role="status" aria-live="polite">
             <span><Icon name="check" size={28} /></span>
             <p className="eyebrow">INQUIRY RECEIVED</p>
-            <h2>Thank you.</h2>
-            <p>We’ll be in touch to discuss your Power Pasture™.</p>
+            <h2 id="inquiry-success-title">Thank you.</h2>
+            <p id="inquiry-success-copy">We’ll be in touch to discuss your Power Pasture™.</p>
             <button className="text-button" onClick={onClose}>Return to system <Icon name="arrow" /></button>
           </div>
         )}
@@ -260,33 +335,11 @@ function InquiryModal({ onClose }) {
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [inquiryOpen, setInquiryOpen] = useState(false)
-  const [booted, setBooted] = useState(false)
-  const [bootMode] = useState(() => {
-    try {
-      return window.sessionStorage.getItem('power-pasture-intro') ? 'returning' : 'first'
-    } catch {
-      return 'first'
-    }
-  })
-  const connectorLayerRef = useRef(null)
-  const hydroRef = useRef(null)
-  const geothermalRef = useRef(null)
-  const hubRef = useRef(null)
-  const hydroPathRef = useRef(null)
-  const geothermalPathRef = useRef(null)
-
+  const [videoAllowed, setVideoAllowed] = useState(() => (
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches && !navigator.connection?.saveData
+  ))
   useEffect(() => {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const bootDuration = reducedMotion ? 120 : bootMode === 'first' ? 1550 : 800
-    const timer = window.setTimeout(() => setBooted(true), bootDuration)
-    try {
-      window.sessionStorage.setItem('power-pasture-intro', 'seen')
-    } catch {
-      // The intro still works when browser storage is unavailable.
-    }
     const root = document.documentElement
-    const clamp = (value) => Math.max(0, Math.min(1, value))
-    const setVariable = (name, value) => root.style.setProperty(name, value)
     const mobileViewport = window.matchMedia('(max-width: 768px)').matches
     const revealTargets = [...document.querySelectorAll('[data-reveal]')]
     const reveal = new IntersectionObserver(
@@ -301,233 +354,110 @@ function App() {
     )
     revealTargets.forEach((element) => reveal.observe(element))
 
-    // Reveal anything already in view after a mobile resize, refresh, or anchor jump.
-    const revealVisibleTargets = () => {
-      const revealLine = window.innerHeight * (mobileViewport ? .96 : .92)
-      revealTargets.forEach((element) => {
-        if (element.classList.contains('is-visible')) return
-        const rect = element.getBoundingClientRect()
-        if (rect.top < revealLine && rect.bottom > 0) {
-          element.classList.add('is-visible')
-          reveal.unobserve(element)
-        }
-      })
-    }
-
     let frame = 0
     let hasScrolled = false
 
     const tick = () => {
       frame = 0
-
-      const nextHasScrolled = window.scrollY > 30
+      const scrollY = window.scrollY
+      const nextHasScrolled = scrollY > 30
       if (nextHasScrolled !== hasScrolled) {
         document.body.classList.toggle('has-scrolled', nextHasScrolled)
         hasScrolled = nextHasScrolled
       }
-
+      const pageTravel = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1)
+      root.style.setProperty('--page-progress', Math.max(0, Math.min(1, scrollY / pageTravel)))
     }
 
     const requestTick = () => {
-      setVariable('--scroll-y', `${window.scrollY}px`)
-      const pageTravel = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1)
-      setVariable('--page-progress', clamp(window.scrollY / pageTravel))
       if (!frame) frame = window.requestAnimationFrame(tick)
     }
 
     window.addEventListener('scroll', requestTick, { passive: true })
     window.addEventListener('resize', requestTick)
-    window.addEventListener('resize', revealVisibleTargets)
-    revealVisibleTargets()
     requestTick()
     return () => {
-      window.clearTimeout(timer)
       reveal.disconnect()
       window.cancelAnimationFrame(frame)
       window.removeEventListener('scroll', requestTick)
       window.removeEventListener('resize', requestTick)
-      window.removeEventListener('resize', revealVisibleTargets)
-    }
-  }, [bootMode])
-
-  useEffect(() => {
-    const layer = connectorLayerRef.current
-    const hub = hubRef.current
-    const hydro = hydroRef.current
-    const geothermal = geothermalRef.current
-    const hydroPath = hydroPathRef.current
-    const geothermalPath = geothermalPathRef.current
-    if (!layer || !hub || !hydro || !geothermal || !hydroPath || !geothermalPath) return undefined
-
-    let frame = 0
-    let active = true
-
-    const edgePoint = (rect, targetX, targetY, layerRect) => {
-      const centerX = rect.left - layerRect.left + rect.width / 2
-      const centerY = rect.top - layerRect.top + rect.height / 2
-      const dx = targetX - centerX
-      const dy = targetY - centerY
-      const scale = 1 / Math.max(
-        Math.abs(dx) / Math.max(rect.width / 2, 1),
-        Math.abs(dy) / Math.max(rect.height / 2, 1),
-        1,
-      )
-      return { x: centerX + dx * scale, y: centerY + dy * scale }
-    }
-
-    const drawPath = (source, path, layerRect, hubRect) => {
-      const hubCenterX = hubRect.left - layerRect.left + hubRect.width / 2
-      const sourceRect = source.getBoundingClientRect()
-      const sourceCenterX = sourceRect.left - layerRect.left + sourceRect.width / 2
-      const sourceCenterY = sourceRect.top - layerRect.top + sourceRect.height / 2
-      const start = {
-        x: hubCenterX >= sourceCenterX
-          ? sourceRect.right - layerRect.left
-          : sourceRect.left - layerRect.left,
-        y: sourceCenterY,
-      }
-      const end = edgePoint(hubRect, sourceCenterX, sourceCenterY, layerRect)
-      const dx = end.x - start.x
-      const dy = end.y - start.y
-      const sideBend = Math.abs(dy) > Math.abs(dx) * 2 && layerRect.width < 760
-        ? Math.min(72, layerRect.width * .18) * (sourceCenterX >= layerRect.width / 2 ? 1 : -1)
-        : 0
-      let d
-      if (Math.abs(dx) >= Math.abs(dy)) {
-        d = `M${start.x} ${start.y} C${start.x + dx * .42} ${start.y}, ${end.x - dx * .28} ${end.y}, ${end.x} ${end.y}`
-      } else if (sideBend) {
-        const sideX = sideBend > 0 ? layerRect.width - 10 : 10
-        const midY = start.y + dy * .52
-        d = `M${start.x} ${start.y} C${sideX} ${start.y + dy * .16}, ${sideX} ${start.y + dy * .34}, ${sideX} ${midY} C${sideX} ${end.y - dy * .28}, ${sideX} ${end.y - dy * .12}, ${end.x} ${end.y}`
-      } else {
-        d = `M${start.x} ${start.y} C${start.x} ${start.y + dy * .42}, ${end.x} ${end.y - dy * .28}, ${end.x} ${end.y}`
-      }
-      path.setAttribute('d', d)
-    }
-
-    const drawConnectors = () => {
-      frame = 0
-      const layerRect = layer.getBoundingClientRect()
-      const hubRect = hub.getBoundingClientRect()
-      layer.setAttribute('viewBox', `0 0 ${layerRect.width} ${layerRect.height}`)
-      drawPath(hydro, hydroPath, layerRect, hubRect)
-      drawPath(geothermal, geothermalPath, layerRect, hubRect)
-    }
-
-    const scheduleDraw = () => {
-      if (active && !frame) frame = window.requestAnimationFrame(drawConnectors)
-    }
-
-    const observer = new ResizeObserver(scheduleDraw)
-    const motionObserver = new MutationObserver(scheduleDraw)
-    ;[layer, hub, hydro, geothermal].forEach((element) => observer.observe(element))
-    motionObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['style'] })
-    window.addEventListener('scroll', scheduleDraw, { passive: true })
-    window.addEventListener('resize', scheduleDraw)
-    document.fonts?.ready.then(scheduleDraw)
-    scheduleDraw()
-
-    return () => {
-      active = false
-      observer.disconnect()
-      motionObserver.disconnect()
-      window.cancelAnimationFrame(frame)
-      window.removeEventListener('scroll', scheduleDraw)
-      window.removeEventListener('resize', scheduleDraw)
     }
   }, [])
 
-  const goTo = (selector) => {
-    document.querySelector(selector)?.scrollIntoView({ behavior: 'smooth' })
-    setMenuOpen(false)
-  }
+  useEffect(() => {
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const connection = navigator.connection
+    const updateVideoPreference = () => setVideoAllowed(!motionQuery.matches && !connection?.saveData)
+    motionQuery.addEventListener('change', updateVideoPreference)
+    connection?.addEventListener?.('change', updateVideoPreference)
+    return () => {
+      motionQuery.removeEventListener('change', updateVideoPreference)
+      connection?.removeEventListener?.('change', updateVideoPreference)
+    }
+  }, [])
 
   return (
     <div className="site" id="top">
-      <div className={`boot-screen is-${bootMode} ${booted ? 'is-done' : ''}`} aria-hidden="true">
-        <div className="boot-field"><i /><i /><i /><span /></div>
-        <div className="boot-stage">
-          <p className="boot-kicker"><i /> Local energy infrastructure</p>
-          <div className="boot-identity">
-            <span className="boot-brand"><img src={brandLogo} alt="" /></span>
-            <div><b>Power Pasture™</b><p>Turning local energy into infrastructure.</p></div>
-          </div>
-          <div className="boot-sequence">
-            <span><i />Identify</span>
-            <span><i />Prepare</span>
-            <span><i />Deploy</span>
-          </div>
-          <div className="boot-line"><i /><b /></div>
-        </div>
-        <div className="boot-meta"><span>Geothermal / Hydro / Solar / Wind</span><span>Lee County</span></div>
-      </div>
+      <a className="skip-link" href="#main-content">Skip to main content</a>
 
       <header className="site-header">
         <Brand />
-        <nav className={menuOpen ? 'is-open' : ''} aria-label="Primary navigation">
-          <button onClick={() => goTo('#system')}>Model</button>
-          <button onClick={() => goTo('#applications')}>Applications</button>
+        <nav id="primary-navigation" className={menuOpen ? 'is-open' : ''} aria-label="Primary navigation">
+          <a href="#system" onClick={() => setMenuOpen(false)}>Model</a>
+          <a href="#applications" onClick={() => setMenuOpen(false)}>Applications</a>
         </nav>
         <button className="header-action" onClick={() => setInquiryOpen(true)}>GET YOUR POWER PASTURE <Icon name="arrow" size={17} /></button>
-        <button className="menu-button" onClick={() => setMenuOpen((open) => !open)} aria-label="Toggle navigation"><Icon name={menuOpen ? 'close' : 'menu'} /></button>
+        <button
+          className="menu-button"
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
+          aria-expanded={menuOpen}
+          aria-controls="primary-navigation"
+        ><Icon name={menuOpen ? 'close' : 'menu'} /></button>
       </header>
 
-      <main>
+      <main id="main-content">
         <section className="hero">
           <div className="hero-sticky">
             <div className="hero-visual">
-              <img className="hero-image" src={heroImage} alt="Power Pasture™ infrastructure distributed through a mountain valley" />
-              <div className="hero-visual-shade" aria-hidden="true" />
-              <div className="hero-grid" aria-hidden="true" />
-              <div className="hero-scanline" aria-hidden="true" />
-              <div className="hero-crosshair hero-crosshair-a" aria-hidden="true"><i /><span>GRID / 04</span></div>
-              <div className="hero-crosshair hero-crosshair-b" aria-hidden="true"><i /><span>LIVE LINK</span></div>
-              <div className="hero-glow" aria-hidden="true" />
+              {videoAllowed ? <video
+                className="hero-image hero-video"
+                src={heroVideo}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+                width="1280"
+                height="720"
+                onCanPlay={(event) => event.currentTarget.classList.add('is-ready')}
+                onError={() => setVideoAllowed(false)}
+                aria-hidden="true"
+              /> : <img
+                className="hero-image hero-poster"
+                src={heroImage}
+                alt="Power Pasture renewable energy infrastructure distributed across a mountain valley"
+                width="960"
+                height="540"
+              />}
+              <div className="hero-tech-frame" aria-hidden="true">
+                <i /><i /><i /><i />
+              </div>
             </div>
-            <svg ref={connectorLayerRef} className="hero-inline-connectors" aria-hidden="true">
-              <path ref={hydroPathRef} className="hero-energy-link source-link link-hydro" pathLength="1" />
-              <path ref={geothermalPathRef} className="hero-energy-link source-link link-geothermal" pathLength="1" />
-            </svg>
-            <div className="hero-energy-map" aria-hidden="true">
-              <svg viewBox="0 0 620 350" preserveAspectRatio="none">
-                <path className="hero-energy-link source-link link-one link-one-desktop" pathLength="1" d="M120 115 C225 115 310 140 440 175" />
-                <path className="hero-energy-link source-link link-one link-one-mobile" pathLength="1" d="M120 55 C225 55 310 106 440 175" />
-                <path className="hero-energy-link source-link link-two" pathLength="1" d="M120 270 C225 270 310 228 440 175" />
-                <circle className="hero-energy-junction" cx="440" cy="175" r="4" />
-              </svg>
-
-              <div className="hero-source-node source-wind">
-                <Icon name="windTurbine" size={22} /><span><b>Wind</b><small>Variable resource</small></span>
-              </div>
-              <div className="hero-source-node source-solar">
-                <Icon name="solar" size={22} /><span><b>Solar</b><small>Scalable generation</small></span>
-              </div>
-
-              <div ref={hubRef} className="hero-map-hub">
-                <span>P</span><b>Power Pasture™</b><small>Unified local energy</small>
-              </div>
-              <span className="hero-map-label source-label">LOCAL RENEWABLE INPUTS</span>
+            <div className="hero-video-copy">
+              <p className="hero-video-kicker"><span /> Local energy infrastructure</p>
+              <h1>Unifying renewable energy <em>to power the world’s consumers.</em></h1>
+              <p>Geothermal, hydro, solar, and wind—connected as one resilient system.</p>
+              <a className="hero-video-cta" href="#system">
+                Explore the system <Icon name="arrow" size={17} />
+              </a>
             </div>
-            <div className="hero-copy">
-              <div className="hero-status-row">
-                <div className="eyebrow hero-eyebrow"><span className="live-dot" /><span className="hero-eyebrow-copy">LOCAL ENERGY / MANY APPLICATIONS</span><i /><span>SYSTEM ONLINE</span></div>
-                <span ref={hydroRef} className="hero-source-inline hero-source-inline-hydro" aria-hidden="true">
-                  <Icon name="hydro" size={18} /><span><b>Hydro</b><small>Dense generation</small></span>
-                </span>
-                <span ref={geothermalRef} className="hero-source-inline hero-source-inline-geothermal" aria-hidden="true">
-                  <Icon name="geothermal" size={18} /><span><b>Geothermal</b><small>Steady resource</small></span>
-                </span>
-              </div>
-              <h1>Unifying renewable energy<br /><em>to power the world’s consumers.</em></h1>
-              <p>Power Pasture™ brings geothermal, hydro, solar, and wind together to serve real-world demand.</p>
-            </div>
-
           </div>
         </section>
 
-        <aside className="power-index" aria-label="Renewable energy source index">
+        <section className="power-index" aria-labelledby="power-index-title">
           <div className="power-index-heading">
-            <p>GET YOUR POWER PASTURE™</p>
+            <h2 id="power-index-title">GET YOUR POWER PASTURE™</h2>
             <span>Select an energy source for details and potential</span>
           </div>
           <div className="power-index-grid">
@@ -558,7 +488,7 @@ function App() {
               </details>
             ))}
           </div>
-        </aside>
+        </section>
 
         <section className="system-section" id="system">
           <div className="system-stage">
@@ -598,7 +528,14 @@ function App() {
             </header>
 
             <figure className="geothermal-product">
-              <img src={geothermalImage} alt="Containerized data center connected to an underground closed-loop geothermal cooling system" />
+              <img
+                src={geothermalImage}
+                alt="Containerized data center connected to an underground closed-loop geothermal cooling system"
+                width="1448"
+                height="1086"
+                loading="lazy"
+                decoding="async"
+              />
               <figcaption><span>Geothermal infrastructure</span><b>01</b></figcaption>
             </figure>
 
