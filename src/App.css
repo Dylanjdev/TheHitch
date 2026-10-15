@@ -1653,8 +1653,26 @@ footer .brand {
   justify-self: start;
 }
 
+footer .brand small {
+  color: var(--accent-bright);
+}
+
 footer > p {
   justify-self: center;
+}
+
+.footer-legal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.footer-legal small {
+  color: rgba(245, 243, 236, 0.64);
+  font: 500 8px/1 var(--mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 footer > div {

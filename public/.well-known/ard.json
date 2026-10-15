@@ -1,0 +1,9 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Power Pasture",
+    "documentationUrl": "https://powerpasture.com/llms.txt",
+    "logoUrl": "https://powerpasture.com/logo.webp"
+  },
+  "entries": []
+}

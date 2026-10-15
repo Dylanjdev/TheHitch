@@ -207,9 +207,9 @@ function EnergyArt({ type }) {
 
 function Brand() {
   return (
-    <a className="brand" href="#top">
-      <span className="brand-mark" aria-hidden="true"><img src={brandLogo} alt="" width="384" height="256" decoding="async" /></span>
-      <span><b>POWER PASTURE™</b><small>LOCAL ENERGY INFRASTRUCTURE</small></span>
+    <a className="brand" href="#top" aria-label="Power Pasture home">
+      <span className="brand-mark"><img src={brandLogo} alt="Power Pasture logo" width="384" height="256" decoding="async" /></span>
+      <span aria-hidden="true"><b>POWER PASTURE™</b><small>LOCAL ENERGY INFRASTRUCTURE</small></span>
     </a>
   )
 }
@@ -585,8 +585,11 @@ function App() {
 
       <footer>
         <Brand />
-        <p>© 2026 POWER PASTURE™</p>
-        <div><a href="mailto:hello@powerpasture.energy">CONTACT ↗</a><a href="#top">BACK TO TOP ↑</a></div>
+        <p className="footer-legal">
+          <span>© 2026 POWER PASTURE™</span>
+          <small>PATENT PENDING</small>
+        </p>
+        <div><a href="mailto:taylor@powerpasture.com">CONTACT ↗</a><a href="#top">BACK TO TOP ↑</a></div>
       </footer>
 
       {inquiryOpen && <InquiryModal onClose={() => setInquiryOpen(false)} />}
