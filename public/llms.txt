@@ -1,6 +1,6 @@
 # Power Pasture
 
-> Power Pasture unifies geothermal, hydro, solar, and wind into resilient local energy infrastructure for digital, industrial, and community demand.
+> Power Pasture plans geothermal, hydro, solar, and wind as resilient local energy infrastructure for data centers, manufacturing, hospitals, and growing communities.
 
 Power Pasture evaluates site-specific renewable resources and presents ways they can work together as adaptable infrastructure. Resource availability, project configuration, and potential output depend on local conditions, permitting, and engineering. The website is informational and does not expose an AI agent, API, MCP server, or autonomous action endpoint.
 
@@ -9,6 +9,8 @@ Power Pasture evaluates site-specific renewable resources and presents ways they
 - [Power Pasture homepage](https://powerpasture.com/): Overview of the Power Pasture model and its local energy infrastructure approach.
 - [Energy system](https://powerpasture.com/#system): How local renewable resources can be identified, prepared, and deployed.
 - [Applications](https://powerpasture.com/#applications): Digital, industrial, and community applications for the infrastructure.
+- [Hospital microgrids](https://powerpasture.com/hospitals): A complete guide to hospital microgrids, documented results, approvals, planning, and Power Pasture™ Outpost Node™, Outpost™, Stall™, and HITCH Post™ architecture.
+- [Industrial power generation](https://powerpasture.com/manufacturing): A guide to on-site generation technologies, combined heat and power efficiency, reliability, emissions, lifetime cost, and site-specific system selection.
 - [Sitemap](https://powerpasture.com/sitemap.xml): Canonical index of public website pages.
 
 ## Contact
