@@ -338,8 +338,8 @@ function HeroScene({ mode = 'power' }) {
       textSprites.push(sprite)
     }
 
-    createTextSprite('01', 'SOURCE LAYER', 'Aggregate.', 'Generation, grid, and reserve sources converge on one field-ready Hitch Post.')
-    createTextSprite('02', 'CONNECTION STATE', 'Hitch.', 'A mobile compute node connects to conditioned power, closed-loop thermal, and live telemetry.')
+    createTextSprite('01', 'SOURCE LAYER', 'Aggregate.', 'Generation, grid, and reserve sources converge at the site level.')
+    createTextSprite('02', 'CONNECTION STATE', 'Connect.', 'A mobile compute node connects to site power, thermal capacity, and live telemetry.')
     createTextSprite('03', 'NETWORK STATE', 'Scale.', 'Every deployment becomes a reusable node in a distributed infrastructure network.')
 
     const createArtifact = (

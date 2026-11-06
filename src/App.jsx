@@ -69,7 +69,7 @@ const layers = [
 const applications = [
   { id: '01', path: '/data-centers', title: 'Data centers', copy: 'High-demand digital infrastructure deployed closer to abundant, locally produced energy.' },
   { id: '02', title: 'Home developments', copy: 'Local renewable generation planned alongside homes, roads, utilities, and growing communities.' },
-  { id: '03', path: '/hospitals', title: 'Hospitals', copy: 'A resilient Outpost Node™ for facilities that depend on continuous, dependable operation.' },
+  { id: '03', path: '/hospitals', title: 'Hospitals', copy: 'Site-specific energy resilience for facilities that depend on continuous, dependable operation.' },
   { id: '04', title: 'Office buildings', copy: 'Adaptable energy systems for commercial campuses and the organizations they support.' },
   { id: '05', title: 'Shopping centers', copy: 'Scalable generation for retail destinations, mixed-use sites, and their surrounding services.' },
   { id: '06', path: '/manufacturing', title: 'Manufacturing & industrial', copy: 'Continuous, high-density power and process heat for manufacturing, cold storage, and heavy industrial operations.' },
@@ -686,48 +686,36 @@ const solutionPages = {
   '/hospitals': {
     slug: 'hospitals',
     index: '03',
-    eyebrow: 'Hospital Outpost Node™',
-    title: 'A resilient Outpost Node™ for critical care.',
-    intro: 'At a hospital campus, Power Pasture™ takes the form of an Outpost Node™—a dedicated local energy installation that coordinates site generation, storage, utility interconnection, and critical-load priorities through a clear, modular architecture.',
+    eyebrow: 'Hospital energy resilience',
+    title: 'Site-specific power for critical care.',
+    intro: 'Power Pasture™ plans local generation, storage, utility coordination, and critical-load priorities around the operating realities of each hospital campus.',
     seoTitle: 'Hospital Microgrids: How They Work | Power Pasture™',
-    seoDescription: 'Learn how hospital microgrids work, what they deliver, and how Power Pasture™ uses Outpost Node™, Outpost™, Stall™, and HITCH Post™ architecture.',
+    seoDescription: 'Learn how hospital microgrids work, what they can deliver, what documented projects show, and how to plan a site-specific system.',
     signal: ['Critical-load priorities', 'Grid + island operation', 'Modular campus growth'],
-    schematic: ['LOCAL ENERGY RESOURCES', 'HITCH POST™', 'HOSPITAL CAMPUS'],
+    schematic: ['LOCAL ENERGY RESOURCES', 'MICROGRID CONTROLS', 'HOSPITAL CAMPUS'],
     sectionKicker: 'Power for a critical operating environment',
     sectionTitle: 'Critical care cannot wait for the grid.',
-    sectionCopy: 'A hospital combines life-safety systems, clinical loads, ventilation, heating, cooling, hot water, and continuous campus growth. The Outpost Node™ organizes local energy infrastructure around those realities while remaining part of the facility’s wider resilience and compliance strategy.',
+    sectionCopy: 'A hospital combines life-safety systems, clinical loads, ventilation, heating, cooling, hot water, and continuous campus growth. The energy strategy must respond to those realities while remaining part of the facility’s wider resilience and compliance plan.',
     priorities: [
-      { code: '01', title: 'Protect the essential', copy: 'Map life-safety, clinical, thermal, and flexible loads so the Outpost Node™ can assign a clear priority to each part of the campus.' },
+      { code: '01', title: 'Protect the essential', copy: 'Map life-safety, clinical, thermal, and flexible loads so the operating plan assigns a clear priority to each part of the campus.' },
       { code: '02', title: 'Work every day', copy: 'Use local generation, thermal resources, storage, and the utility as an active operating system—not infrastructure that only wakes up during an outage.' },
       { code: '03', title: 'Expand in place', copy: 'Add capacity as new wings, imaging suites, central-plant equipment, and other campus loads come online.' },
     ],
-    architecture: {
-      kicker: 'The hospital system, in Power Pasture™ language',
-      title: 'One campus. Four defined parts. One connected system.',
-      copy: 'The vocabulary makes the physical architecture easy to understand—from the overall deployment down to the fixed point where power is conditioned and routed.',
-      terms: [
-        { code: '01', name: 'Outpost Node™', role: 'The overall site or deployment location', copy: 'The dedicated, localized microgrid installation serving the hospital campus. A multi-position field is a Power Pasture™; a single-site or hospital-dedicated installation is an Outpost Node™.' },
-        { code: '02', name: 'Outpost™', role: 'The relocatable infrastructure unit', copy: 'The physical, relocatable technical module or enclosure that houses microgrid equipment, power distribution, controls, and an optional compute or operational payload.' },
-        { code: '03', name: 'Stall™', role: 'The prepared site position', copy: 'The move-in-ready landing position on hospital grounds where an Outpost™ connects to the campus system.' },
-        { code: '04', name: 'HITCH Post™', role: 'The fixed power + utility interface', copy: 'The service node assigned to the Stall™ that conditions, controls, and manages generation, storage, and utility interconnection before routing power onward.' },
-      ],
-      example: 'At Northside Hospital, we deployed an Outpost™ into a single Stall™, anchored by a HITCH Post™ to create a self-sustaining Outpost Node™.',
-    },
     processLabel: 'OPERATING SEQUENCE',
     processTitle: 'Designed for normal operation, outages, and the return to grid.',
-    processCopy: 'The final sequence, permitted configuration, and supported loads are determined through engineering, utility coordination, commissioning, and approval by the authorities responsible for the facility. The Outpost Node™ complements required emergency power, life-safety systems, and facility-specific continuity planning.',
+    processCopy: 'The final sequence, permitted configuration, and supported loads are determined through engineering, utility coordination, commissioning, and approval by the authorities responsible for the facility. The system complements required emergency power, life-safety systems, and facility-specific continuity planning.',
     process: [
-      { label: 'GRID-CONNECTED', title: 'Operate every day', copy: 'The HITCH Post™ coordinates local resources, storage, campus demand, and utility power according to the hospital’s operating plan.' },
+      { label: 'GRID-CONNECTED', title: 'Operate every day', copy: 'The microgrid coordinates local resources, storage, campus demand, and utility power according to the hospital’s operating plan.' },
       { label: 'ISLAND MODE', title: 'Protect critical loads', copy: 'When utility service is interrupted, the system follows the commissioned transition sequence and directs available energy toward the campus load priorities.' },
-      { label: 'RECOVERY', title: 'Return with control', copy: 'After utility service stabilizes and operating checks are complete, the Outpost Node™ follows the approved sequence back to grid-connected operation.' },
+      { label: 'RECOVERY', title: 'Return with control', copy: 'After utility service stabilizes and operating checks are complete, the microgrid follows the approved sequence back to grid-connected operation.' },
     ],
-    resourceTitle: 'Feed the Outpost Node™ with the best resources the site can support.',
+    resourceTitle: 'Build around the best resources the site can support.',
     resources: [
       { name: 'Geothermal', role: 'Steady energy + thermal foundation', copy: 'Can support year-round thermal exchange and, where the resource and engineering align, dependable generation for campus infrastructure.' },
       { name: 'Solar + storage', role: 'Modular production + time shifting', copy: 'Can add scalable capacity across suitable roofs, parking structures, or nearby land, with storage supporting the campus operating strategy.' },
       { name: 'Hydro + wind', role: 'Site-specific complements', copy: 'Can diversify the local resource mix where water, wind, land, and permitting conditions responsibly support development.' },
     ],
-    ctaTitle: 'Build an Outpost Node™ around the realities of your hospital campus.',
+    ctaTitle: 'Build the energy plan around the realities of your hospital campus.',
   },
   '/geothermal': {
     slug: 'geothermal',
@@ -814,42 +802,6 @@ function DemandSchematic({ labels, type }) {
   )
 }
 
-function BrandArchitecture({ architecture }) {
-  return (
-    <section className="solution-architecture" id="architecture" aria-labelledby="architecture-title">
-      <header data-reveal>
-        <p className="section-code">BRANDED ARCHITECTURE</p>
-        <p className="architecture-kicker">{architecture.kicker}</p>
-        <h2 id="architecture-title">{architecture.title}</h2>
-        <p>{architecture.copy}</p>
-      </header>
-
-      <div className="architecture-system" aria-label="Hospital Outpost Node architecture" data-reveal>
-        <span>LOCAL RESOURCES</span><Icon name="arrow" size={18} />
-        <span>HITCH POST™</span><Icon name="arrow" size={18} />
-        <span>OUTPOST™</span><Icon name="arrow" size={18} />
-        <span>HOSPITAL CAMPUS</span>
-      </div>
-
-      <div className="architecture-grid">
-        {architecture.terms.map((term) => (
-          <article key={term.code} data-reveal>
-            <span>{term.code}</span>
-            <small>{term.role}</small>
-            <h3>{term.name}</h3>
-            <p>{term.copy}</p>
-          </article>
-        ))}
-      </div>
-
-      <blockquote data-reveal>
-        <span>IN PRACTICE</span>
-        <p>“{architecture.example}”</p>
-      </blockquote>
-    </section>
-  )
-}
-
 function HospitalArticlePage({ page }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [inquiryOpen, setInquiryOpen] = useState(false)
@@ -864,7 +816,7 @@ function HospitalArticlePage({ page }) {
         <Brand />
         <nav id="primary-navigation" className={menuOpen ? 'is-open' : ''} aria-label="Primary navigation">
           <a href="#what-a-hospital-microgrid-is" onClick={() => setMenuOpen(false)}>Overview</a>
-          <a href="#architecture" onClick={() => setMenuOpen(false)}>Our architecture</a>
+          <a href="#what-goes-into-a-hospital-microgrid" onClick={() => setMenuOpen(false)}>System components</a>
           <a href="#what-documented-projects-and-studies-show" onClick={() => setMenuOpen(false)}>Evidence</a>
           <a href="#how-to-plan-a-hospital-microgrid" onClick={() => setMenuOpen(false)}>Planning</a>
         </nav>
@@ -893,7 +845,6 @@ function HospitalArticlePage({ page }) {
               <p>Table of contents</p>
               <ol>
                 <li><a href="#what-a-hospital-microgrid-is">What a hospital microgrid is</a></li>
-                <li><a href="#architecture">The Power Pasture™ architecture</a></li>
                 <li><a href="#how-it-runs">How it runs</a></li>
                 <li><a href="#what-goes-into-a-hospital-microgrid">What goes into it</a></li>
                 <li><a href="#what-documented-projects-and-studies-show">Projects and studies</a></li>
@@ -937,14 +888,12 @@ function HospitalArticlePage({ page }) {
             </div>
           </div>
 
-          <BrandArchitecture architecture={page.architecture} />
-
           <div className="hospital-reading-shell hospital-reading-main">
             <div className="hospital-prose">
               <section id="how-it-runs" data-reveal>
                 <p className="section-code">02 / OPERATING MODES</p>
                 <h2>How it runs: grid-connected and island mode</h2>
-                <p>The microgrid controller is the central brain. HCAI compares it to a conductor: it <a href="https://hcai.ca.gov/wp-content/uploads/2021/09/HBSB-Microgrid-White-Paper-FINAL-9.24.2021-A.pdf">manages generators, batteries, and nearby building energy systems</a> and orchestrates them toward goals such as lowest price, cleanest energy, or greatest reliability. In a Power Pasture™ hospital deployment, the HITCH Post™ provides the fixed power and utility interface that conditions, controls, and manages those local resources before power is routed into the Outpost™ and hospital campus.</p>
+                <p>The microgrid controller is the central brain. HCAI compares it to a conductor: it <a href="https://hcai.ca.gov/wp-content/uploads/2021/09/HBSB-Microgrid-White-Paper-FINAL-9.24.2021-A.pdf">manages generators, batteries, and nearby building energy systems</a> and orchestrates them toward goals such as lowest price, cleanest energy, or greatest reliability.</p>
 
                 <h3>When the utility is available</h3>
                 <p>In grid-connected mode, the controller decides each hour where power should come from. According to the same paper, it may buy grid power when prices are low and use solar to charge batteries, then discharge those batteries when grid power is expensive. The hospital gains value every day, not only during emergencies.</p>
@@ -1051,15 +1000,15 @@ function HospitalArticlePage({ page }) {
                 <h2>Perspective</h2>
                 <blockquote className="hospital-perspective">
                   <p>Most hospital microgrid conversations start with a battery and a generator. We start with the site. Every campus sits on a different set of local resources, and the strongest systems are the ones built around them.</p>
-                  <p>At Power Pasture™ we design site-specific systems that pair geothermal, hydro, solar, and wind according to what is actually available near the hospital. Our approach is meant to deliver stable, 24/7 operation, because a hospital cannot ask the sun or the wind to keep a schedule. Steady sources carry the base load, variable sources add volume, and the HITCH Post™ ties it together with the thermal infrastructure the campus already needs.</p>
-                  <p>We also believe in modular scaling. A hospital grows: a new wing, a new imaging suite, a new central plant. An Outpost Node™ that can grow in steps with the campus protects the original investment and keeps reliability intact as demand rises.</p>
+                  <p>At Power Pasture™ we design site-specific systems that pair geothermal, hydro, solar, and wind according to what is actually available near the hospital. Our approach is meant to deliver stable, 24/7 operation, because a hospital cannot ask the sun or the wind to keep a schedule. Steady sources carry the base load, variable sources add volume, and the energy and thermal plans are developed together.</p>
+                  <p>We also believe in modular scaling. A hospital grows: a new wing, a new imaging suite, a new central plant. An energy system that can grow in steps with the campus protects the original investment and keeps reliability intact as demand rises.</p>
                   <p>The projects above show that regulators, utilities, and health systems are now comfortable with renewable-led resilience. The next step is fitting that resilience to each place, and that is the work we do.</p>
                   <cite>— Dylan</cite>
                 </blockquote>
               </section>
 
               <section id="work-with-power-pasture" className="hospital-work-with" data-reveal>
-                <p className="section-code">YOUR SITE / YOUR OUTPOST NODE™</p>
+                <p className="section-code">YOUR SITE / YOUR ENERGY PLAN</p>
                 <h2>Work with Power Pasture™ on your site</h2>
                 <p>If you operate a hospital or a power-intensive campus, we design and implement custom renewable energy infrastructure that combines geothermal, hydro, solar, and wind into a system suited to your local conditions. Our focus is high-density, dispatchable generation with stable 24/7 operation, scaled in modules as your needs grow, and integrated with thermal infrastructure.</p>
                 <p>To discuss how a site-specific system could fit your facility, see our <a href="https://powerpasture.com">local renewable energy infrastructure</a> offer. Pricing is project-based and depends on your site, so the starting point is a conversation about your loads and local resources.</p>
@@ -1358,15 +1307,9 @@ function DetailPage({ page }) {
       <header className="site-header">
         <Brand />
         <nav id="primary-navigation" className={menuOpen ? 'is-open' : ''} aria-label="Primary navigation">
-          {page.architecture ? <>
-            <a href="/#system" onClick={() => setMenuOpen(false)}>Energy Sources</a>
-            <a href="#architecture" onClick={() => setMenuOpen(false)}>Outpost Node</a>
-            <a href="#operations" onClick={() => setMenuOpen(false)}>Operations</a>
-          </> : <>
-            <a href="/#system" onClick={() => setMenuOpen(false)}>Energy Sources</a>
-            <a href="/#applications" onClick={() => setMenuOpen(false)}>Solutions</a>
-            <a href="/geothermal" onClick={() => setMenuOpen(false)}>Geothermal</a>
-          </>}
+          <a href="/#system" onClick={() => setMenuOpen(false)}>Energy Sources</a>
+          <a href="/#applications" onClick={() => setMenuOpen(false)}>Solutions</a>
+          <a href="/geothermal" onClick={() => setMenuOpen(false)}>Geothermal</a>
         </nav>
         <button className="header-action" onClick={() => setInquiryOpen(true)}>START A CONVERSATION <Icon name="arrow" size={17} /></button>
         <button className="menu-button" onClick={() => setMenuOpen((open) => !open)} aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={menuOpen} aria-controls="primary-navigation"><Icon name={menuOpen ? 'close' : 'menu'} /></button>
@@ -1410,8 +1353,6 @@ function DetailPage({ page }) {
             ))}
           </div>
         </section>
-
-        {page.architecture && <BrandArchitecture architecture={page.architecture} />}
 
         <section className="solution-process" id="operations" aria-labelledby={`${page.slug}-process`}>
           <div className="process-intro" data-reveal>
