@@ -5,15 +5,18 @@ import geothermalImage from './assets/GeoThermalRepresentation.webp'
 import hospitalImage from './assets/hospital.webp'
 import outageSequenceImage from './assets/MicroGridOutageSequence.webp'
 import outageProbabilityImage from './assets/OutageSurvivalPropabilities.webp'
-import industrialHeroImage from './assets/IndustrialHero.webp'
+import industrialHeroImage from './assets/OutPost-hero.webp'
 import industrialEfficiencyImage from './assets/EffeciensybyGenerationMethod.webp'
 import industrialInteriorImage from './assets/Inside.webp'
 import powerPastureImage from './assets/PowerPastureImage.webp'
+import solarColdStorageHero from './assets/SolarColdStorageHero.jpg'
+import solarThermalStorageImage from './assets/SolarThermalStorage.jpg'
+import solarStorageOptionsImage from './assets/SolarStorageOptions.jpg'
 import brandLogo from './assets/PowerPastureLogo-tm.webp'
 import './App.css'
 
 // Launch solution pages individually as their content is approved.
-const enabledSolutionPages = new Set(['/hospitals', '/manufacturing'])
+const enabledSolutionPages = new Set(['/hospitals', '/manufacturing', '/solar-cold-storage'])
 
 const layers = [
   {
@@ -525,6 +528,11 @@ function HomePage() {
                     <ul aria-label={`${layer.title} characteristics`}>
                       {layer.traits.map((trait) => <li key={trait}>{trait}</li>)}
                     </ul>
+                    {layer.code === 'SOLAR' && (
+                      <a className="energy-guide-link" href="/solar-cold-storage">
+                        Read the solar cold storage guide <Icon name="arrow" size={17} />
+                      </a>
+                    )}
                   </div>
                 </article>
               ))}
@@ -617,6 +625,11 @@ function HomePage() {
 }
 
 const solutionPages = {
+  '/solar-cold-storage': {
+    slug: 'solar-cold-storage',
+    seoTitle: 'Solar Power Cold Storage: How It Works and What It Costs | Power Pasture™',
+    seoDescription: 'Learn how solar cold storage works, how batteries and thermal storage compare, how systems are sized, and what documented projects cost.',
+  },
   '/data-centers': {
     slug: 'data-centers',
     index: '01',
@@ -1058,6 +1071,252 @@ function HospitalArticlePage({ page }) {
   )
 }
 
+function SolarColdStorageArticlePage({ page }) {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [inquiryOpen, setInquiryOpen] = useState(false)
+  useRevealEffects()
+
+  return (
+    <div className="site hospital-article-site solar-article-site" id="top">
+      <PageSeo page={page} />
+      <a className="skip-link" href="#main-content">Skip to main content</a>
+
+      <header className="site-header">
+        <Brand />
+        <nav id="primary-navigation" className={menuOpen ? 'is-open' : ''} aria-label="Primary navigation">
+          <a href="#what-solar-cold-storage-is" onClick={() => setMenuOpen(false)}>Overview</a>
+          <a href="#system-components" onClick={() => setMenuOpen(false)}>Components</a>
+          <a href="#how-to-size" onClick={() => setMenuOpen(false)}>Sizing</a>
+          <a href="#cost-and-return" onClick={() => setMenuOpen(false)}>Cost</a>
+        </nav>
+        <button className="header-action" onClick={() => setInquiryOpen(true)}>START A CONVERSATION <Icon name="arrow" size={17} /></button>
+        <button className="menu-button" onClick={() => setMenuOpen((open) => !open)} aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={menuOpen} aria-controls="primary-navigation"><Icon name={menuOpen ? 'close' : 'menu'} /></button>
+      </header>
+
+      <main id="main-content">
+        <article>
+          <header className="hospital-article-hero">
+            <div className="hospital-article-hero-top" data-reveal>
+              <a className="breadcrumb" href="/#source-solar">Power Pasture™ / Energy sources / <span>Solar</span></a>
+              <p className="solution-kicker"><i /> Solar energy / Technical guide</p>
+            </div>
+            <figure className="hospital-article-hero-image solar-article-hero-image" data-reveal>
+              <img src={solarColdStorageHero} alt="Produce crates inside a solar-powered cold room" width="1280" height="720" />
+            </figure>
+            <div className="hospital-article-hero-copy" data-reveal>
+              <h1>Solar power cold storage: How it works and what it costs</h1>
+              <p>Solar power cold storage is a refrigerated room or container that runs on photovoltaic panels, with thermal storage, batteries, or both carrying the load when the sun is down. This guide explains the parts, sizing logic, reported costs, and the decisions that determine whether a project holds up.</p>
+            </div>
+          </header>
+
+          <div className="hospital-reading-shell hospital-reading-intro">
+            <aside className="hospital-toc" aria-label="Table of contents" data-reveal>
+              <p>Table of contents</p>
+              <ol>
+                <li><a href="#what-solar-cold-storage-is">What it is</a></li>
+                <li><a href="#how-it-works">How it works</a></li>
+                <li><a href="#system-components">System components</a></li>
+                <li><a href="#storage-options">Storage options</a></li>
+                <li><a href="#how-to-size">How to size a room</a></li>
+                <li><a href="#cost-and-return">Cost and return</a></li>
+                <li><a href="#reliability">Reliability planning</a></li>
+                <li><a href="#larger-sites">Larger sites</a></li>
+                <li><a href="#faq">FAQ</a></li>
+                <li><a href="#sources">Sources</a></li>
+              </ol>
+            </aside>
+
+            <div className="hospital-prose">
+              <section className="hospital-tldr" aria-labelledby="solar-tldr-title" data-reveal>
+                <p className="section-code">THE SHORT VERSION</p>
+                <h2 id="solar-tldr-title">TL;DR</h2>
+                <ul>
+                  <li>Solar cold storage runs refrigeration on PV power and rides through cloudy spells and nights on ice, phase-change material, batteries, or a mix.</li>
+                  <li>A typical off-grid walk-in room combines a solar array, cooling unit, insulation, storage, controls, and remote monitoring.</li>
+                  <li>Sizing starts with the product: how much must be cooled each day, to what temperature, and in what climate.</li>
+                  <li>Published examples range from about $40,000 for a field-tested room to roughly $100,000 for turnkey containers delivered.</li>
+                  <li>Large, critical loads need site-specific energy design that goes beyond panels alone.</li>
+                </ul>
+              </section>
+
+              <section id="what-solar-cold-storage-is" data-reveal>
+                <p className="section-code">01 / DEFINITION</p>
+                <h2>What solar cold storage is and who uses it</h2>
+                <p>Solar cold storage uses PV electricity to drive refrigeration and pairs it with energy storage so cooling continues in all weather. A <a href="https://cryo-systems.com/project/solar-cold-room/">typical project description</a> lists settings that include unstable-grid and off-grid locations, agriculture, aquaculture and medicine, produce and flower cooling, freshly caught seafood, emergency supplies, remote retail, and food service.</p>
+                <p>The scale runs from a single walk-in room to a containerized unit to a full cold store. Temperature targets differ by product. The <a href="https://openknowledge.fao.org/server/api/core/bitstreams/8cb77c5f-1142-4880-a21e-e0f62f7ec057/content">FAO's work on solar energy and the cold chain</a> describes chilled fishery products as held between 0°C and 15°C (32°F to 59°F), while frozen fish is ideally stored at -18°C (0°F) or below. Produce, dairy, vaccines, and frozen goods each require their own range, and that range drives nearly every design decision that follows.</p>
+              </section>
+            </div>
+          </div>
+
+          <div className="hospital-reading-shell hospital-reading-main">
+            <div className="hospital-prose">
+              <section id="how-it-works" data-reveal>
+                <p className="section-code">02 / ENERGY PATH</p>
+                <h2>How a solar cold room makes and keeps cold</h2>
+                <p>During sunshine hours, PV power runs a refrigeration cycle. Daytime electricity cools the room through vapor compression and also charges a thermal energy storage system using a phase-change material such as water or a water-salt eutectic mixture.</p>
+                <p>The central idea is to store cold rather than electricity. A <a href="https://www.jom.ch/assets/downloads/Low-carbon-cold-room-report_August-2024-3-1.pdf">Kenya low-carbon cold room report</a> describes a DC-powered system that circulates a natural refrigerant and banks cold as frozen water in an ice store. A water chiller can then deliver cooling even while the cooling units are off.</p>
+                <figure className="hospital-editorial-figure hospital-editorial-figure-wide solar-diagram-figure">
+                  <img src={solarThermalStorageImage} alt="Five-stage diagram showing solar panels powering room cooling, thermal storage, a water chiller, and grid backup" width="1280" height="720" loading="lazy" decoding="async" />
+                  <figcaption>Daytime PV runs refrigeration and charges thermal storage; stored cold carries the room after the sun fades.</figcaption>
+                </figure>
+                <h3>Why the compressor matters</h3>
+                <p>Many modern units use a variable-speed compressor so cooling output follows available sunlight. Reporting on <a href="https://solarquarter.com/2025/02/12/mnre-issues-guidelines-for-solar-cold-storage-with-thermal-energy-storage-backup/">India's 2025 solar cold storage guidelines</a> describes refrigeration powered directly by PV, without batteries for primary cooling. That can reduce dependence on the most expensive and shortest-lived component in the system.</p>
+              </section>
+
+              <section id="system-components" data-reveal>
+                <p className="section-code">03 / SYSTEM COMPONENTS</p>
+                <h2>The components of a solar cold storage system</h2>
+                <p>A <a href="https://efficiencyforaccess.org/wp-content/uploads/EforA_Solar_Technology_Brief_WalkInColdRooms_July-2021.pdf">technology brief covering India and Sub-Saharan Africa</a> describes a typical commercial off-grid walk-in cold room as five connected parts: a solar array, remote monitoring, battery and/or thermal storage, a cooling unit, and insulation.</p>
+                <div className="hospital-table-wrap" role="region" aria-label="Solar cold storage components" tabIndex="0">
+                  <table>
+                    <thead><tr><th>Component</th><th>Job</th><th>What to check</th></tr></thead>
+                    <tbody>
+                      <tr><td>Solar array</td><td>Powers the compressor and charges storage</td><td>Roof or ground area, shading, mounting strength</td></tr>
+                      <tr><td>Cooling unit</td><td>Removes heat from the room and product</td><td>Capacity against peak load, DC or AC drive</td></tr>
+                      <tr><td>Insulation</td><td>Keeps heat out</td><td>Thickness, material, doors, and air sealing</td></tr>
+                      <tr><td>Thermal storage</td><td>Banks cold as ice or phase-change material</td><td>Hours of autonomy and charge reporting</td></tr>
+                      <tr><td>Batteries</td><td>Cover peaks, controls, and short gaps</td><td>Keep them small if thermal storage carries the main load</td></tr>
+                      <tr><td>Controls and monitoring</td><td>Match compressors, pumps, and fans to conditions</td><td>Temperature, humidity, PV output, and storage charge</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p>Controls deserve special attention. The <a href="https://www.green-cooling-initiative.org/fileadmin/user_upload/2022_GIZ_Solar_cold_rooms_update2025.pdf">GIZ guidelines on solar-powered walk-in cold rooms</a> stress that intelligent controls are crucial for managing batteries and thermal storage. Compressor speed, pumps, and fans should respond to ambient temperature, room temperature, battery voltage, and irradiation.</p>
+              </section>
+
+              <section id="storage-options" data-reveal>
+                <p className="section-code">04 / STORAGE</p>
+                <h2>Batteries, ice, or phase-change material</h2>
+                <p>The storage choice sets cost, lifespan, and maintenance for the life of the system.</p>
+                <h3>Ice storage</h3>
+                <p>Excess daytime electricity makes ice that cools the room at night. The GIZ guidelines describe ice storage as low-cost, recyclable, low-pollution, and nearly maintenance free, with no performance loss over time when durable materials are used.</p>
+                <h3>Phase-change material</h3>
+                <p>PCMs hold a fixed temperature as they freeze and melt, which suits rooms that must stay in a narrow band. One <a href="https://pluss.co.in/wp-content/themes/pluss/assets/image/brochures%20(1)/brochures/Food%20&%20Agri/Doc-325_Food%20and%20Agri_HimaCool_Brochure_2024(single%20page%20view).pdf">PCM-based system brochure</a> describes up to 30 hours of temperature hold in ideal conditions without electrical batteries after sunset.</p>
+                <h3>Batteries</h3>
+                <p>Batteries are flexible and familiar, but they age. The Kenya report found that combining thermal storage with a small amount of batteries was more cost-efficient and lower-carbon than a battery-free design. Many strong systems use thermal storage as the main buffer and a small battery for controls and short gaps.</p>
+                <figure className="hospital-editorial-figure hospital-editorial-figure-wide solar-diagram-figure">
+                  <img src={solarStorageOptionsImage} alt="Comparison of ice, phase-change material, and battery storage for solar cold rooms" width="1280" height="720" loading="lazy" decoding="async" />
+                  <figcaption>Ice, PCM, and batteries solve different parts of the storage problem; hybrid designs can balance lifespan, flexibility, and cost.</figcaption>
+                </figure>
+              </section>
+
+              <section id="how-to-size" data-reveal>
+                <p className="section-code">05 / SIZING SEQUENCE</p>
+                <h2>How to size a solar cold room</h2>
+                <p>Sizing is a chain of questions. Work through them in order.</p>
+                <ol className="hospital-planning-list">
+                  <li><strong>Define the product and daily throughput.</strong> Daily kilograms cooled matters more than room volume alone. The Kenya project was designed to cool 400 kg of produce from ambient temperature to 10°C every afternoon.</li>
+                  <li><strong>Set the temperature.</strong> A chiller at 5°C and a freezer at -30°C have very different loads. An <a href="https://scholarhub.ui.ac.id/cgi/viewcontent.cgi?article=1079&context=jmef">Indonesian 10-ton fish-store study</a> used both zones and calculated 27.51 kW of total consumption.</li>
+                  <li><strong>Model the climate.</strong> Hot sites raise the load. One <a href="https://www.freecold.com/en/freecold-photovoltaic-solar-refrigeration/solar-powered-cold-room/">solar cold-room manufacturer</a> specifies operation up to 43°C (109°F) with reinforced insulation.</li>
+                  <li><strong>Separate peak and average load.</strong> A Bangladesh hybrid design calculated 5.53 kW of maximum cooling load, selected an 8 kW cooling system, and paired 6 kW of panels with a generator.</li>
+                  <li><strong>Calculate the panel area.</strong> The FAO gives a worked example in which a 20 m × 10 m × 5 m cold store at -30°C requires 180 panels rated at 200 W, plus controllers, batteries, and an inverter.</li>
+                  <li><strong>Plan pre-cooling.</strong> India's 2025 guidelines for 2-to-20-metric-ton units call for daily pre-cooling of 10 percent of storage capacity for at least two days.</li>
+                </ol>
+                <p>The pattern is clear: build the design around the heaviest day, not the average one, and make sure the storage buffer—not panel count alone—covers the gap.</p>
+              </section>
+
+              <section id="cost-and-return" data-reveal>
+                <p className="section-code">06 / COST + RETURN</p>
+                <h2>What it costs and what it returns</h2>
+                <p>Published figures vary widely because rooms, regions, delivery models, and business cases differ. Treat these as reference points from specific studies, not project quotes.</p>
+                <div className="hospital-table-wrap" role="region" aria-label="Reported solar cold storage cost and return figures" tabIndex="0">
+                  <table>
+                    <thead><tr><th>Study</th><th>Setting</th><th>Reported figure</th></tr></thead>
+                    <tbody>
+                      <tr><td><a href="https://efficiencyforaccess.org/wp-content/uploads/Lessons-learned-from-implementing-solar-powered-walk-in-cold-rooms-for-smallholder-agriculture-in-Zimbabwe-and-Malawi.pdf">Efficiency for Access</a></td><td>Zimbabwe and Malawi</td><td>About $40,000 for the lowest-cost practical room; roughly $100,000 for turnkey containers delivered</td></tr>
+                      <tr><td><a href="https://scholarhub.ui.ac.id/cgi/viewcontent.cgi?article=1079&context=jmef">Indonesian design study</a></td><td>10-ton fish auction cold store</td><td>Capex of IDR 745.29 million; 0.41-year modeled payback</td></tr>
+                      <tr><td><a href="https://research.chalmers.se/publication/547432/file/547432_Fulltext.pdf">Chalmers study</a></td><td>Tanzania fish mini-grid</td><td>About $2.40 per day added operating cost; spoilage fell to zero</td></tr>
+                      <tr><td><a href="https://www.frontiersin.org/journals/energy-research/articles/10.3389/fenrg.2026.1983314/full">Frontiers review</a></td><td>109 studies, 2017–2025</td><td>Competitive with diesel; up to 14 percent lower daily operating cost in optimized systems</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <h3>Design choices move cost</h3>
+                <p>The Kenya report says cost and emissions optimization cut final deployment cost by about 20 percent against a similar-size room in the region.</p>
+                <h3>Spoilage is the real return</h3>
+                <p>The Frontiers review reports post-harvest losses above 25 to 30 percent in developing regions, largely because of weak cold-storage infrastructure and unreliable energy. In the Tanzania study, spoilage fell to zero after fish was refrigerated, while profitability still depended on sufficient daily sales.</p>
+                <h3>Optimization pays in small steps</h3>
+                <p>In the detailed Ethiopian case covered by the review, an optimized hybrid of solar-thermal, PV, wind, and battery cost $86.20 per day, down from $100 for the baseline renewable hybrid.</p>
+              </section>
+
+              <section id="reliability" data-reveal>
+                <p className="section-code">07 / RELIABILITY</p>
+                <h2>Planning for reliability and utilization</h2>
+                <p>A solar cold room is only as good as its worst week. Four practical points emerge from the research.</p>
+                <ul>
+                  <li><strong>Plan the buffer for the worst days.</strong> Track room temperature, humidity, solar generation, and storage charge remotely.</li>
+                  <li><strong>Model the real load.</strong> Include compressor start-up and cycling, product heat loads, door openings, and battery degradation.</li>
+                  <li><strong>Match supply to demand.</strong> The room's business model and connection to market access matter as much as its refrigeration hardware.</li>
+                  <li><strong>Bring in the whole team.</strong> Operators, customers, engineers, and local stakeholders all shape whether a system is used well.</li>
+                </ul>
+              </section>
+
+              <section id="larger-sites" data-reveal>
+                <p className="section-code">08 / BEYOND THE PANEL ARRAY</p>
+                <h2>When panels alone are not enough</h2>
+                <p>Small rooms for farms and fisheries can often run on a panel array and a storage buffer. Larger operations face a different problem. A manufacturing plant, hospital, or data center runs refrigeration or process cooling alongside many other loads and cannot accept a gap in supply.</p>
+                <p>Pairing sources can make sense at that scale. Geothermal and hydro, where the site supports them, can deliver steady output around the clock, while wind may complement solar's production profile. The cold store becomes one load inside a system built around the site's complete resource and demand picture.</p>
+                <blockquote className="hospital-perspective">
+                  <p>Most solar cold storage writing treats the cold room as a standalone gadget. We look at it as one load inside a site's whole energy picture. A cold room, vaccine fridge bank, or freezer hall is a continuous demand, and continuous demand is best met by a system designed for the hours after sunset as carefully as the hours at noon.</p>
+                  <p>Buffers, controls, and load modeling decide whether a system performs—not panel count alone. We design for the heaviest day and plan thermal infrastructure together with the electrical side.</p>
+                  <cite>— Dylan</cite>
+                </blockquote>
+              </section>
+
+              <section className="hospital-work-with" data-reveal>
+                <p className="section-code">09 / POWER FOR LARGER COLD CHAINS</p>
+                <h2>Build the cold load into the site's full energy plan</h2>
+                <p>If you operate a hospital, manufacturing plant, data center, or community development where cooling is a steady load, Power Pasture™ designs local renewable energy infrastructure around the resources and demand at that site.</p>
+                <figure className="hospital-editorial-figure industrial-power-pasture-figure">
+                  <img src={powerPastureImage} alt="Power Pasture system diagram connecting geothermal, hydro, solar, and wind resources" width="1920" height="1080" loading="lazy" decoding="async" />
+                  <figcaption>Solar can carry daytime cooling while complementary resources and storage support the full operating window.</figcaption>
+                </figure>
+                <p>Tell us about the site, its loads, target temperatures, and resource options. Project scope and pricing are set per site.</p>
+                <button className="primary-button" onClick={() => setInquiryOpen(true)}>Discuss your cold storage load <Icon name="arrow" size={18} /></button>
+              </section>
+
+              <section id="faq" data-reveal>
+                <p className="section-code">10 / COMMON QUESTIONS</p>
+                <h2>FAQ</h2>
+                <div className="hospital-faq">
+                  <details><summary>Can a solar cold room run without batteries?</summary><p>Yes, in many designs. A variable-speed compressor can run directly on PV power while thermal storage made from ice or PCM carries the room through nights and cloudy spells. Some systems still use a small battery for controls and short gaps.</p></details>
+                  <details><summary>How long does stored cold last after sunset?</summary><p>It depends on insulation, ambient temperature, door use, product load, and storage size. One PCM-based product brochure states up to 30 hours in ideal conditions; a project should be designed around its worst expected days.</p></details>
+                  <details><summary>What products can solar cold storage handle?</summary><p>Fruits, vegetables, flowers, seafood, dairy, vaccines, and other perishable supplies can all be served, at temperatures ranging from chilled to deep-frozen. The target range for each product sets the load and equipment size.</p></details>
+                  <details><summary>Is solar cold storage cheaper than diesel?</summary><p>The cited Frontiers review generally found levelized energy costs competitive with, and sometimes lower than, diesel generation. Results still depend on the site, load, utilization, and system sizing.</p></details>
+                </div>
+              </section>
+
+              <section id="sources" className="hospital-sources" data-reveal>
+                <p className="section-code">11 / REFERENCES</p>
+                <h2>Sources</h2>
+                <ul>
+                  <li><a href="https://cryo-systems.com/project/solar-cold-room/">Solar Cold Room project description</a></li>
+                  <li><a href="https://openknowledge.fao.org/server/api/core/bitstreams/8cb77c5f-1142-4880-a21e-e0f62f7ec057/content">Solar energy and the cold chain, FAO</a></li>
+                  <li><a href="https://www.jom.ch/assets/downloads/Low-carbon-cold-room-report_August-2024-3-1.pdf">Low-carbon cold room report, August 2024</a></li>
+                  <li><a href="https://solarquarter.com/2025/02/12/mnre-issues-guidelines-for-solar-cold-storage-with-thermal-energy-storage-backup/">MNRE guidelines for solar cold storage, SolarQuarter</a></li>
+                  <li><a href="https://efficiencyforaccess.org/wp-content/uploads/EforA_Solar_Technology_Brief_WalkInColdRooms_July-2021.pdf">Solar Appliance Technology Brief: Walk-in Cold Rooms</a></li>
+                  <li><a href="https://www.green-cooling-initiative.org/fileadmin/user_upload/2022_GIZ_Solar_cold_rooms_update2025.pdf">Solar-powered walk-in cold rooms guidelines, GIZ</a></li>
+                  <li><a href="https://pluss.co.in/wp-content/themes/pluss/assets/image/brochures%20(1)/brochures/Food%20&%20Agri/Doc-325_Food%20and%20Agri_HimaCool_Brochure_2024(single%20page%20view).pdf">PCM-based solar cold storage brochure</a></li>
+                  <li><a href="https://www.freecold.com/en/freecold-photovoltaic-solar-refrigeration/solar-powered-cold-room/">Solar-powered cold room specifications</a></li>
+                  <li><a href="https://scholarhub.ui.ac.id/cgi/viewcontent.cgi?article=1079&context=jmef">Design of a 10-Ton Solar-Powered Cold Storage, Indonesia</a></li>
+                  <li><a href="https://research.chalmers.se/publication/547432/file/547432_Fulltext.pdf">Solar PV mini-grid powered cold storage, Chalmers</a></li>
+                  <li><a href="https://www.frontiersin.org/journals/energy-research/articles/10.3389/fenrg.2026.1983314/full">Systematic review of techno-economic modeling, Frontiers in Energy Research</a></li>
+                  <li><a href="https://efficiencyforaccess.org/wp-content/uploads/Lessons-learned-from-implementing-solar-powered-walk-in-cold-rooms-for-smallholder-agriculture-in-Zimbabwe-and-Malawi.pdf">Lessons learned from solar-powered walk-in cold rooms</a></li>
+                </ul>
+              </section>
+            </div>
+          </div>
+        </article>
+      </main>
+
+      <footer>
+        <Brand />
+        <p className="footer-legal"><span>© 2026 POWER PASTURE™</span><small>PATENT PENDING</small></p>
+        <div><a href="mailto:taylor@powerpasture.com">CONTACT ↗</a><a href="#top">BACK TO TOP ↑</a></div>
+      </footer>
+      {inquiryOpen && <InquiryModal onClose={() => setInquiryOpen(false)} />}
+    </div>
+  )
+}
+
 function IndustrialArticlePage({ page }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [inquiryOpen, setInquiryOpen] = useState(false)
@@ -1088,7 +1347,7 @@ function IndustrialArticlePage({ page }) {
               <p className="solution-kicker"><i /> Industrial energy / Technical guide</p>
             </div>
             <figure className="hospital-article-hero-image industrial-article-hero-image" data-reveal>
-              <img src={industrialHeroImage} alt="Solar array, wind turbines, and an electrical substation at an industrial site" width="1280" height="720" />
+              <img src={industrialHeroImage} alt="Modular industrial energy units with integrated solar panels at dusk" width="1280" height="720" />
             </figure>
             <div className="hospital-article-hero-copy" data-reveal>
               <h1>Industrial power generation: Options, efficiency and how to choose</h1>
@@ -1425,6 +1684,7 @@ function App({ pathname }) {
   if (path === '/') return <HomePage />
   if (path === '/hospitals') return <HospitalArticlePage page={solutionPages['/hospitals']} />
   if (path === '/manufacturing') return <IndustrialArticlePage page={solutionPages['/manufacturing']} />
+  if (path === '/solar-cold-storage') return <SolarColdStorageArticlePage page={solutionPages['/solar-cold-storage']} />
   if (enabledSolutionPages.has(path) && solutionPages[path]) return <DetailPage page={solutionPages[path]} />
   return <NotFoundPage />
 }

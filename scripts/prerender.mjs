@@ -16,6 +16,7 @@ const pages = [
   { pathname: '/', file: 'index.html' },
   { pathname: '/hospitals', file: 'hospitals.html' },
   { pathname: '/manufacturing', file: 'manufacturing.html' },
+  { pathname: '/solar-cold-storage', file: 'solar-cold-storage.html' },
   { pathname: '/404', file: '404.html' },
 ]
 

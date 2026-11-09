@@ -11,6 +11,7 @@ Power Pasture evaluates site-specific renewable resources and presents ways they
 - [Applications](https://powerpasture.com/#applications): Digital, industrial, and community applications for the infrastructure.
 - [Hospital microgrids](https://powerpasture.com/hospitals): A complete guide to hospital microgrids, documented results, resilience, approvals, and site-specific planning.
 - [Industrial power generation](https://powerpasture.com/manufacturing): A guide to on-site generation technologies, combined heat and power efficiency, reliability, emissions, lifetime cost, and site-specific system selection.
+- [Solar power cold storage](https://powerpasture.com/solar-cold-storage): A practical guide to solar cold rooms, thermal storage choices, sizing, reliability, and reported project costs.
 - [Sitemap](https://powerpasture.com/sitemap.xml): Canonical index of public website pages.
 
 ## Contact

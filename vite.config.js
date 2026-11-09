@@ -11,6 +11,7 @@ export default defineConfig(({ isSsrBuild }) => ({
         home: 'index.html',
         hospitals: 'hospitals.html',
         manufacturing: 'manufacturing.html',
+        solarColdStorage: 'solar-cold-storage.html',
         notFound: '404.html',
       },
     },

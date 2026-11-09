@@ -4001,6 +4001,37 @@ body.has-scrolled .site-header {
   font-size: .76rem;
 }
 
+.energy-guide-link {
+  width: fit-content;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  padding: 0 18px;
+  color: #fff;
+  border-radius: 999px;
+  background: var(--module-accent);
+  font-size: .82rem;
+  font-weight: 650;
+  line-height: 1;
+  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+.energy-guide-link:hover {
+  filter: brightness(.92);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--module-accent) 22%, transparent);
+}
+
+.energy-guide-link svg {
+  transition: transform 180ms ease;
+}
+
+.energy-guide-link:hover svg {
+  transform: translateX(3px);
+}
+
 @media (max-width: 1050px) {
   .power-index {
     grid-template-columns: 1fr;
@@ -5942,6 +5973,39 @@ footer a {
 
 .industrial-article-site .hospital-table-wrap table {
   min-width: 860px;
+}
+
+/* Solar cold storage uses the editorial guide system with a warmer solar accent. */
+.solar-article-site {
+  --solar-gold: #c98527;
+}
+
+.solar-article-site .solution-kicker,
+.solar-article-site .hospital-prose .section-code,
+.solar-article-site .hospital-toc > p {
+  color: #9b641f;
+}
+
+.solar-article-site .solution-kicker i,
+.solar-article-site .hospital-planning-list li::before {
+  background: var(--solar-gold);
+}
+
+.solar-article-site .hospital-article-hero {
+  background:
+    radial-gradient(circle at 84% 12%, rgba(201, 133, 39, .2), transparent 30%),
+    linear-gradient(rgba(201, 133, 39, .035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201, 133, 39, .035) 1px, transparent 1px),
+    #090c09;
+  background-size: auto, 72px 72px, 72px 72px, auto;
+}
+
+.solar-article-hero-image img {
+  object-position: center;
+}
+
+.solar-diagram-figure img {
+  background: #f5f2e9;
 }
 
 @media (max-width: 620px) {
